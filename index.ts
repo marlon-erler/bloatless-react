@@ -132,11 +132,20 @@ export function subscribeElementProperty<H extends HTMLElement>(
         state.value = element[property];
     });
 }
- 
+
 /* Components */
+export function Input(type: string, value: State<any>) {
+    const input = create("input");
+    input.type = type;
+    subscribeElementProperty(input, "value", value);
+
+    return input;
+}
+
 export function Label(labelText: string, element: HTMLElement) {
     const label = create("label");
     label.innerText = labelText;
     label.append(element);
+
     return label;
 }

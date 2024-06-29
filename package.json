@@ -3,5 +3,8 @@
   "version": "0.0.0-alpha1",
   "description": "reactive, component-based ui framework without the bloat",
   "author": "marlon-erler",
-  "license": "SEE LICENSE IN LICENSE"
+  "license": "SEE LICENSE IN LICENSE",
+  "dependencies": {
+    "uuid": "^10.0.0"
+  }
 }

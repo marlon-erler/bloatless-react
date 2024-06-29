@@ -1,3 +1,5 @@
+import { v4 } from "uuid";
+
 /*
 	DATA MODEL
 */
@@ -17,8 +19,7 @@ export class UUID implements Stringifiable {
     readonly value: string;
 
     constructor() {
-        //TODO
-        this.value = "";
+        this.value = v4;
     }
 
     toString() {
@@ -101,6 +102,16 @@ export class ListState<T extends Identifiable> extends State<Set<T>> {
     }
 }
 
+export function createProxyState<T>(
+    statesToSubscibe: State<any>[],
+    fn: () => T
+) {
+    const proxyState = new State<T>(fn());
+    statesToSubscibe.forEach((state) =>
+        state.subscribe(() => (proxyState.value = fn()))
+    );
+}
+
 /*
 	HTML
 */
@@ -119,25 +130,23 @@ export function createRoot(tagName: keyof HTMLElementTagNameMap) {
 }
 
 /* Utility */
-export function subscribeElementProperty<H extends HTMLElement>(
-    element: H,
-    property: keyof H,
-    state: State<any>,
-    eventName: keyof HTMLElementEventMap = "input"
+export function bindElementValue(
+    element: HTMLInputElement|HTMLTextAreaElement,
+    state: State<string>,
 ) {
     state.subscribe((newValue) => {
-        element[property] = state.value;
+        element.value = state.value;
     });
-    element.addEventListener(eventName, () => {
-        state.value = element[property];
+    element.addEventListener("input", () => {
+        state.value = element.value;
     });
 }
 
 /* Components */
-export function Input(type: string, value: State<any>) {
+export function Input(type: string, value: State<string>) {
     const input = create("input");
     input.type = type;
-    subscribeElementProperty(input, "value", value);
+    bindElementValue(input, value);
 
     return input;
 }

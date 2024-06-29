@@ -18,7 +18,7 @@ export class UUID implements Stringifiable {
 
     constructor() {
         //TODO
-        this.value = '';
+        this.value = "";
     }
 
     toString() {
@@ -109,12 +109,21 @@ export interface HTMLElementWithValue<T> extends HTMLElement {
     value: T;
 }
 
+/* Base */
+export const create = document.createElement;
+
+export function createRoot(tagName: keyof HTMLElementTagNameMap) {
+    const root = create(tagName);
+    document.body.append(root);
+    return create(tagName);
+}
+
 /* Utility */
 export function subscribeElementProperty<H extends HTMLElement>(
     element: H,
     property: keyof H,
     state: State<any>,
-    eventName: keyof HTMLElementEventMap = 'input',
+    eventName: keyof HTMLElementEventMap = "input"
 ) {
     state.subscribe((newValue) => {
         element[property] = state.value;

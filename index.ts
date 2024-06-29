@@ -22,7 +22,7 @@ export class UUID implements Stringifiable {
         this.value = v4;
     }
 
-    toString() {
+    toString(): string {
         return this.value;
     }
 }
@@ -75,14 +75,14 @@ export class ListState<T extends Identifiable> extends State<Set<T>> {
         super(new Set<T>());
     }
 
-    add(...items: T[]) {
+    add(...items: T[]): void {
         items.forEach((item) => {
             this.value.add(item);
             this.additionHandlers.forEach((handler) => handler(item));
         });
     }
 
-    delete(...items: T[]) {
+    delete(...items: T[]): void {
         items.forEach((item) => {
             this.value.delete(item);
             const uuid = item.uuid;
@@ -93,11 +93,11 @@ export class ListState<T extends Identifiable> extends State<Set<T>> {
         });
     }
 
-    handleAddition(handler: StateSubscription<T>) {
+    handleAddition(handler: StateSubscription<T>): void {
         this.additionHandlers.add(handler);
     }
 
-    handleRemoval(item: T, handler: StateSubscription<T>) {
+    handleRemoval(item: T, handler: StateSubscription<T>): void {
         this.removalHandlers.set(item.uuid, handler);
     }
 }
@@ -105,11 +105,12 @@ export class ListState<T extends Identifiable> extends State<Set<T>> {
 export function createProxyState<T>(
     statesToSubscibe: State<any>[],
     fn: () => T
-) {
+): State<T> {
     const proxyState = new State<T>(fn());
     statesToSubscibe.forEach((state) =>
         state.subscribe(() => (proxyState.value = fn()))
     );
+    return proxyState;
 }
 
 /*
@@ -123,7 +124,7 @@ export interface HTMLElementWithValue<T> extends HTMLElement {
 /* Base */
 export const create = document.createElement;
 
-export function createRoot(tagName: keyof HTMLElementTagNameMap) {
+export function createRoot(tagName: keyof HTMLElementTagNameMap): HTMLElement {
     const root = create(tagName);
     document.body.append(root);
     return create(tagName);
@@ -133,7 +134,7 @@ export function createRoot(tagName: keyof HTMLElementTagNameMap) {
 export function bindElementValue(
     element: HTMLInputElement|HTMLTextAreaElement,
     state: State<string>,
-) {
+): void {
     state.subscribe((newValue) => {
         element.value = state.value;
     });
@@ -143,7 +144,7 @@ export function bindElementValue(
 }
 
 /* Components */
-export function Button(text: string, fn: () => void) {
+export function Button(text: string, fn: () => void): HTMLButtonElement {
     const button = create("button");
     button.innerText = text;
     button.addEventListener("click", fn);
@@ -151,7 +152,7 @@ export function Button(text: string, fn: () => void) {
     return button;
 }
 
-export function Input(type: string, value: State<string>) {
+export function Input(type: string, value: State<string>): HTMLInputElement {
     const input = create("input");
     input.type = type;
     bindElementValue(input, value);
@@ -159,7 +160,7 @@ export function Input(type: string, value: State<string>) {
     return input;
 }
 
-export function Label(labelText: string, element: HTMLElement) {
+export function Label(labelText: string, element: HTMLElement): HTMLLabelElement {
     const label = create("label");
     label.innerText = labelText;
     label.append(element);

@@ -1,0 +1,11 @@
+{
+  "name": "mini-ui-framework",
+  "version": "0.0.0-alpha1",
+  "description": "reactive, component-based ui framework without the bloat",
+  "main": "init.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "marlon-erler",
+  "license": "SEE LICENSE IN LICENSE"
+}

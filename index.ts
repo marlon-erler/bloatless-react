@@ -143,6 +143,14 @@ export function bindElementValue(
 }
 
 /* Components */
+export function Button(text: string, fn: () => void) {
+    const button = create("button");
+    button.innerText = text;
+    button.addEventListener("click", fn);
+
+    return button;
+}
+
 export function Input(type: string, value: State<string>) {
     const input = create("input");
     input.type = type;

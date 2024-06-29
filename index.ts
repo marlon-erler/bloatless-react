@@ -39,6 +39,8 @@ export function unwrapState<T>(valueObject: Value<T>): State<T> {
 
 /* State */
 export type StateSubscription<T> = (newValue: T) => void;
+export type AdditionSubscription<T> = (newItem: T) => void;
+export type RemovalSubscription<T> = (removedItem: T) => void;
 
 export class State<T> {
     private _value: T;
@@ -62,14 +64,15 @@ export class State<T> {
         this._bindings.forEach((fn) => fn(this._value));
     }
 
-    subscribe(fn: StateSubscription<T>): void {
+    subscribe(fn: (newValue: T) => void): void {
         this._bindings.add(fn);
+        fn(this._value)
     }
 }
 
 export class ListState<T extends Identifiable> extends State<Set<T>> {
-    private additionHandlers = new Set<StateSubscription<T>>();
-    private removalHandlers = new Map<UUID, StateSubscription<T>>();
+    private additionHandlers = new Set<AdditionSubscription<T>>();
+    private removalHandlers = new Map<UUID, RemovalSubscription<T>>();
 
     constructor() {
         super(new Set<T>());
@@ -93,11 +96,11 @@ export class ListState<T extends Identifiable> extends State<Set<T>> {
         });
     }
 
-    handleAddition(handler: StateSubscription<T>): void {
+    handleAddition(handler: AdditionSubscription<T>): void {
         this.additionHandlers.add(handler);
     }
 
-    handleRemoval(item: T, handler: StateSubscription<T>): void {
+    handleRemoval(item: T, handler: RemovalSubscription<T>): void {
         this.removalHandlers.set(item.uuid, handler);
     }
 }
@@ -122,12 +125,10 @@ export interface HTMLElementWithValue<T> extends HTMLElement {
 }
 
 /* Base */
-export const create = document.createElement;
-
 export function createRoot(tagName: keyof HTMLElementTagNameMap): HTMLElement {
-    const root = create(tagName);
+    const root = document.createElement(tagName);
     document.body.append(root);
-    return create(tagName);
+    return root;
 }
 
 /* Utility */
@@ -145,7 +146,7 @@ export function bindElementValue(
 
 /* Components */
 export function Button(text: string, fn: () => void): HTMLButtonElement {
-    const button = create("button");
+    const button = document.createElement("button");
     button.innerText = text;
     button.addEventListener("click", fn);
 
@@ -153,7 +154,7 @@ export function Button(text: string, fn: () => void): HTMLButtonElement {
 }
 
 export function Input(type: string, value: State<string>): HTMLInputElement {
-    const input = create("input");
+    const input = document.createElement("input");
     input.type = type;
     bindElementValue(input, value);
 
@@ -161,7 +162,7 @@ export function Input(type: string, value: State<string>): HTMLInputElement {
 }
 
 export function Label(labelText: string, element: HTMLElement): HTMLLabelElement {
-    const label = create("label");
+    const label = document.createElement("label");
     label.innerText = labelText;
     label.append(element);
 

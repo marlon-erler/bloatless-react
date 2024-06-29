@@ -82,7 +82,7 @@ export class ListState<T extends Identifiable> extends State<Set<T>> {
         });
     }
 
-    delete(...items: T[]): void {
+    remove(...items: T[]): void {
         items.forEach((item) => {
             this.value.delete(item);
             const uuid = item.uuid;

@@ -2,13 +2,6 @@
   "name": "mini-ui-framework",
   "version": "0.0.0-alpha1",
   "description": "reactive, component-based ui framework without the bloat",
-  "scripts": {
-    "init": "node init.js",
-    "build": "node build.js"
-  },
   "author": "marlon-erler",
-  "license": "SEE LICENSE IN LICENSE",
-  "dependencies": {
-    "esbuild": "^0.21.5"
-  }
+  "license": "SEE LICENSE IN LICENSE"
 }

@@ -1,2 +1,2 @@
-# mini-ui-framework
-reactive, component-based ui framework without the bloat
+# react-mini
+very minimal and flexible react alternative

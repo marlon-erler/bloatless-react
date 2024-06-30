@@ -177,3 +177,21 @@ export function Label(
 
     return label;
 }
+
+export function TextElement(
+    tagName: keyof HTMLElementTagNameMap,
+    innerText: string
+): HTMLElement {
+    const textElement = document.createElement(tagName);
+    textElement.innerText = innerText;
+    return textElement;
+}
+
+export function ReactiveTextElement(
+    tagName: keyof HTMLElementTagNameMap,
+    state: State<string>
+): HTMLElement {
+    const textElement = document.createElement(tagName);
+    state.subscribe((newValue) => (textElement.innerText = newValue));
+    return textElement;
+}

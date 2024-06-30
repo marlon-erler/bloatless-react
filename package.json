@@ -1,7 +1,7 @@
 {
-  "name": "mini-ui-framework",
-  "version": "0.0.0-alpha1",
-  "description": "reactive, component-based ui framework without the bloat",
+  "name": "bare-react",
+  "version": "0.0.0",
+  "description": "very minimal and flexible react alternative",
   "author": "marlon-erler",
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {

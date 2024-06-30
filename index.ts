@@ -19,7 +19,7 @@ export class UUID implements Stringifiable {
     readonly value: string;
 
     constructor() {
-        this.value = v4;
+        this.value = v4();
     }
 
     toString(): string {
@@ -175,7 +175,7 @@ export class React {
                 }
             });
 
-        children.forEach((child) => element.append(child));
+        children.filter((x) => x).forEach((child) => element.append(child));
 
         return element;
     }

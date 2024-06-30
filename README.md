@@ -89,8 +89,8 @@ const listState = new React.ListState<Item>();
 
 // Handle addition and removal
 listState.handleAddition((newItem) => {
-    console.log(`${newItem.text} was added`);
-    listState.handleRemoval(newItem, () => `${newItem.text} was removed`);
+  console.log(`${newItem.text} was added`);
+  listState.handleRemoval(newItem, () => console.log(`${newItem.text} was removed`));
 });
 
 // Add item
@@ -138,6 +138,8 @@ const name = new React.State("John Doe");
 The `subscribe:children` attribute subscribes to a ListState and adds/removes child elements accordingly.
 
 ```TypeScript
+
+
 // Define Item
 class Item implements React.Identifiable {
   uuid = new React.UUID();

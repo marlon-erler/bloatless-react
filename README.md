@@ -35,11 +35,11 @@ const age = new React.State(69); //will be State<number>
 // Get value
 console.log(name.value);
 
-// Set value
-name.value = "Jeff";
-
 // Subscribe
 age.subscribe(newAge => console.log(`Age changed to ${newAge}`));
+
+// Set value
+name.value = "Jeff";
 ```
 
 ## Proxy States

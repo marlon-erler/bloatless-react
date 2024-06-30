@@ -8,14 +8,8 @@ export interface Identifiable {
     uuid: UUID;
 }
 
-export interface Stringifiable {
-    toString(): string;
-}
-
-export type Value<T> = T | State<T>;
-
 /* Utility */
-export class UUID implements Stringifiable {
+export class UUID {
     readonly value: string;
 
     constructor() {
@@ -25,16 +19,6 @@ export class UUID implements Stringifiable {
     toString(): string {
         return this.value;
     }
-}
-
-export function unwrapValue<T>(valueObject: Value<T>): T {
-    if (valueObject instanceof State) return valueObject.value;
-    return valueObject;
-}
-
-export function unwrapState<T>(valueObject: Value<T>): State<T> {
-    if (valueObject instanceof State) return valueObject;
-    return new State(valueObject);
 }
 
 /* State */

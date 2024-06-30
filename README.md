@@ -138,7 +138,7 @@ const name = new React.State("John Doe");
 The `subscribe:children` attribute subscribes to a ListState and adds/removes child elements accordingly.
 
 ```TypeScript
-
+import * as React from 'bloatless-react';
 
 // Define Item
 class Item implements React.Identifiable {

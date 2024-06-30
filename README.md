@@ -16,9 +16,20 @@ Bloatless-React is a very minimal and flexible alternative to React.
 
 You can use any bundler you want, but esbuild is the fastest and smallest out there:
 
--   `npm install esbuild bloatless-react`
+```shell
+npm install esbuild bloatless-react
+mkdir src dist
+touch src/index.tsx dist/index.html
+```
 
-Set up your project in whatever way you want. Your JavaScript will need to be bundled and imported by your .html files.
+The following build script will be enough:
+```JSON
+{
+  "scripts": {
+    "build": "esbuild src/index.tsx --bundle --outdir=dist"
+  }
+}
+```
 
 ## States
 

@@ -149,7 +149,10 @@ export class React {
                         );
                         element.addEventListener(
                             "input",
-                            () => (value.value = (element as any).value)
+                            () =>
+                                ((value as State<any>).value = (element as any)[
+                                    keyValue
+                                ])
                         );
                     default:
                         element.setAttribute(key, value);

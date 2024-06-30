@@ -100,67 +100,73 @@ export function createProxyState<T>(
     return proxyState;
 }
 
+export type ListItemConverter<T extends Identifiable> = (
+    item: T,
+    listState: ListState<T>
+) => HTMLElement;
+
 /*
     JSX
 */
 
-export class React {
-    static createElement(
-        tagName: keyof HTMLElementTagNameMap,
-        attributes: { [key: string]: any } | null = {},
-        ...children: (HTMLElement | string)[]
-    ) {
-        const element = document.createElement(tagName);
-        console.log(children);
+export function createElement(
+    tagName: keyof HTMLElementTagNameMap,
+    attributes: { [key: string]: any } | null = {},
+    ...children: (HTMLElement | string)[]
+) {
+    const element = document.createElement(tagName);
+    console.log(children);
 
-        if (attributes != null)
-            Object.entries(attributes).forEach((entry) => {
-                const [key, value] = entry;
-                const [keyDirective, keyValue] = key.split(":");
+    if (attributes != null)
+        Object.entries(attributes).forEach((entry) => {
+            const [key, value] = entry;
+            const [keyDirective, keyValue] = key.split(":");
 
-                switch (keyDirective) {
-                    case "on": {
-                        element.addEventListener(keyValue, value);
-                        break;
-                    }
-                    case "subscribe": {
-                        if (keyValue == "children") {
-                            const { listState, toElement } = value as {
-                                listState: ListState<any>;
-                                toElement: (item: any) => HTMLElement;
-                            };
-                            listState.handleAddition((newItem) => {
-                                const child = toElement(newItem);
-                                listState.handleRemoval(newItem, () =>
-                                    child.remove()
-                                );
-                                element.append(child);
-                            });
-                        } else {
-                            const state = value as State<any>;
-                            state.subscribe(
-                                (newValue) => (element[keyValue] = newValue)
+            switch (keyDirective) {
+                case "on": {
+                    element.addEventListener(keyValue, value);
+                    break;
+                }
+                case "subscribe": {
+                    if (keyValue == "children") {
+                        const [listState, toElement] = value as [
+                            listState: ListState<any>,
+                            (
+                                item: any,
+                                listState: ListState<any>
+                            ) => HTMLElement
+                        ];
+                        listState.handleAddition((newItem) => {
+                            const child = toElement(newItem, listState);
+                            listState.handleRemoval(newItem, () =>
+                                child.remove()
                             );
-                        }
-                        break;
-                    }
-                    case "bind": {
+                            element.append(child);
+                        });
+                    } else {
                         const state = value as State<any>;
                         state.subscribe(
                             (newValue) => (element[keyValue] = newValue)
                         );
-                        element.addEventListener(
-                            "input",
-                            () => (state.value = (element as any)[keyValue])
-                        );
                     }
-                    default:
-                        element.setAttribute(key, value);
+                    break;
                 }
-            });
+                case "bind": {
+                    const state = value as State<any>;
+                    state.subscribe(
+                        (newValue) => (element[keyValue] = newValue)
+                    );
+                    element.addEventListener(
+                        "input",
+                        () => (state.value = (element as any)[keyValue])
+                    );
+                }
+                default:
+                    element.setAttribute(key, value);
+            }
+        });
 
-        children.filter((x) => x).forEach((child) => element.append(child));
+    children.filter((x) => x).forEach((child) => element.append(child));
 
-        return element;
-    }
+    return element;
 }

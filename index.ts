@@ -66,7 +66,7 @@ export class State<T> {
 
     subscribe(fn: (newValue: T) => void): void {
         this._bindings.add(fn);
-        fn(this._value)
+        fn(this._value);
     }
 }
 
@@ -133,8 +133,8 @@ export function createRoot(tagName: keyof HTMLElementTagNameMap): HTMLElement {
 
 /* Utility */
 export function bindElementValue(
-    element: HTMLInputElement|HTMLTextAreaElement,
-    state: State<string>,
+    element: HTMLInputElement | HTMLTextAreaElement,
+    state: State<string>
 ): void {
     state.subscribe((newValue) => {
         element.value = state.value;
@@ -153,6 +153,12 @@ export function Button(text: string, fn: () => void): HTMLButtonElement {
     return button;
 }
 
+export function Div(...children: HTMLElement[]): HTMLDivElement {
+    const div = document.createElement("div");
+    div.append(...children);
+    return div;
+}
+
 export function Input(type: string, value: State<string>): HTMLInputElement {
     const input = document.createElement("input");
     input.type = type;
@@ -161,7 +167,10 @@ export function Input(type: string, value: State<string>): HTMLInputElement {
     return input;
 }
 
-export function Label(labelText: string, element: HTMLElement): HTMLLabelElement {
+export function Label(
+    labelText: string,
+    element: HTMLElement
+): HTMLLabelElement {
     const label = document.createElement("label");
     label.innerText = labelText;
     label.append(element);

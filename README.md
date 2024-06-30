@@ -87,9 +87,6 @@ class Item implements React.Identifiable {
 // Create ListState
 const listState = new React.ListState<Item>();
 
-// Handle addition
-listState.handleAddition((newItem) => console.log(newItem.text));
-
 // Handle addition and removal
 listState.handleAddition((newItem) => {
     console.log(`${newItem.text} was added`);

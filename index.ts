@@ -127,33 +127,49 @@ export class React {
         ...children: (HTMLElement | string)[]
     ) {
         const element = document.createElement(tagName);
+        console.log(children);
 
         if (attributes != null)
             Object.entries(attributes).forEach((entry) => {
                 const [key, value] = entry;
                 const [keyDirective, keyValue] = key.split(":");
-                console.log(keyDirective, keyValue, value);
 
                 switch (keyDirective) {
-                    case "on":
+                    case "on": {
                         element.addEventListener(keyValue, value);
                         break;
-                    case "subscribe":
-                        (value as State<any>).subscribe(
-                            (newValue) => (element[keyValue] = newValue)
-                        );
+                    }
+                    case "subscribe": {
+                        if (keyValue == "children") {
+                            const { listState, toElement } = value as {
+                                listState: ListState<any>;
+                                toElement: (item: any) => HTMLElement;
+                            };
+                            listState.handleAddition((newItem) => {
+                                const child = toElement(newItem);
+                                listState.handleRemoval(newItem, () =>
+                                    child.remove()
+                                );
+                                element.append(child);
+                            });
+                        } else {
+                            const state = value as State<any>;
+                            state.subscribe(
+                                (newValue) => (element[keyValue] = newValue)
+                            );
+                        }
                         break;
-                    case "bind":
-                        (value as State<any>).subscribe(
+                    }
+                    case "bind": {
+                        const state = value as State<any>;
+                        state.subscribe(
                             (newValue) => (element[keyValue] = newValue)
                         );
                         element.addEventListener(
                             "input",
-                            () =>
-                                ((value as State<any>).value = (element as any)[
-                                    keyValue
-                                ])
+                            () => (state.value = (element as any)[keyValue])
                         );
+                    }
                     default:
                         element.setAttribute(key, value);
                 }

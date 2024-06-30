@@ -117,6 +117,52 @@ export function createProxyState<T>(
 }
 
 /*
+    JSX
+*/
+
+export class React {
+    static createElement(
+        tagName: keyof HTMLElementTagNameMap,
+        attributes: { [key: string]: any } | null = {},
+        ...children: (HTMLElement | string)[]
+    ) {
+        const element = document.createElement(tagName);
+
+        if (attributes != null)
+            Object.entries(attributes).forEach((entry) => {
+                const [key, value] = entry;
+                const [keyDirective, keyValue] = key.split(":");
+                console.log(keyDirective, keyValue, value);
+
+                switch (keyDirective) {
+                    case "on":
+                        element.addEventListener(keyValue, value);
+                        break;
+                    case "subscribe":
+                        (value as State<any>).subscribe(
+                            (newValue) => (element[keyValue] = newValue)
+                        );
+                        break;
+                    case "bind":
+                        (value as State<any>).subscribe(
+                            (newValue) => (element[keyValue] = newValue)
+                        );
+                        element.addEventListener(
+                            "input",
+                            () => (value.value = (element as any).value)
+                        );
+                    default:
+                        element.setAttribute(key, value);
+                }
+            });
+
+        children.forEach((child) => element.append(child));
+
+        return element;
+    }
+}
+
+/*
 	HTML
 */
 /* Types */

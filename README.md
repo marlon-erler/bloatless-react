@@ -15,7 +15,8 @@ Bloatless-React is a very minimal and flexible alternative to React.
 ## Setup
 
 You can use any bundler you want, but esbuild is the fastest and smallest out there:
-`npm install esbuild bloatless-react`
+
+-   `npm install esbuild bloatless-react`
 
 Set up your project in whatever way you want. Your JavaScript will need to be bundled and imported by your .html files.
 
@@ -60,7 +61,7 @@ summary.subscribe(console.log);
 
 ## ListStates
 
-A ListState\<T\> is a State whose value is a Set<\T\>. A ListState allows specific subscriptions for new items and the removal of a specific item. This allows dynamic lists to run efficiently.
+A ListState\<T\> is a State whose value is a Set\<T\>. A ListState allows specific subscriptions to detect when items get added and removed. This allows dynamic lists to run efficiently.
 
 ```TypeScript
 // Import
@@ -69,7 +70,6 @@ import * as React from 'bloatless-react';
 // Define Item type
 class Item implements React.Identifiable {
   uuid = new React.UUID();
-
   constructor(public text: string) {}
 }
 
@@ -84,6 +84,13 @@ listState.handleAddition((newItem) => {
     console.log(`${newItem.text} was added`);
     listState.handleRemoval(newItem, () => `${newItem.text} was removed`);
 });
+
+// Add item
+const newItem = new Item("hello, world!");
+listState.add(newItem);
+
+// Remove item
+listState.remove(newItem);
 ```
 
 ## UI
@@ -91,6 +98,7 @@ listState.handleAddition((newItem) => {
 Bloatless React provides a modified polyfill for the React API. This means that **you can use JSX** almost like you would in a React project. Additional functionailiy is implemented through directives, similar to Svelte:
 
 ### Events
+
 The `on:<event>` attribute adds an EventListener
 
 ```TypeScript
@@ -98,6 +106,7 @@ The `on:<event>` attribute adds an EventListener
 ```
 
 ### Dynamic Properties and Content
+
 The `subscribe:<property>` attribute subscribes to a State and changes the element's property. You can use attributes as well as innerText and innerHTML.
 
 ```TypeScript
@@ -106,6 +115,7 @@ const name = new React.State("John Doe");
 ```
 
 ### Bindings
+
 The `bind:<property>` attribute acts like a combination of `subscribe:<property>` and `on:input`. It binds the element's property to the state bi-directinally.
 
 ```TypeScript
@@ -116,7 +126,8 @@ const name = new React.State("John Doe");
 ```
 
 ### Dynamic Lists
-The `subscribe:children` attribute subscribes to a ListState and adds/removes child elements accordingly
+
+The `subscribe:children` attribute subscribes to a ListState and adds/removes child elements accordingly.
 
 ```TypeScript
 // Define Item
@@ -125,6 +136,7 @@ class Item implements React.Identifiable {
   constructor(public text: string) {}
 }
 
+// This ListItemConverter creates an HTML element based on an Item
 const convertItem: React.ListItemConverter<Item> = (item, listState) => {
   function remove() {
     listState.remove(item);
@@ -144,7 +156,8 @@ const listState = new React.ListState<Item>();
 const newItemName = new React.State("");
 
 function addItem() {
-  listState.add(new Item(newItemName.value));
+  const newItem = new Item(newItemName.value);
+  listState.add(newItem);
 }
 
 // Build UI
@@ -155,3 +168,4 @@ document.body.append(
     <div subscribe:children={[listState, convertItem]}></div>
   </div>
 );
+```

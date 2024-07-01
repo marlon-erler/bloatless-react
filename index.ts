@@ -119,16 +119,16 @@ export function createElement(
 
     if (attributes != null)
         Object.entries(attributes).forEach((entry) => {
-            const [key, value] = entry;
-            const [keyDirective, keyValue] = key.split(":");
+            const [attributename, value] = entry;
+            const [directiveKey, directiveValue] = attributename.split(":");
 
-            switch (keyDirective) {
+            switch (directiveKey) {
                 case "on": {
-                    element.addEventListener(keyValue, value);
+                    element.addEventListener(directiveValue, value);
                     break;
                 }
                 case "subscribe": {
-                    if (keyValue == "children") {
+                    if (directiveValue == "children") {
                         const [listState, toElement] = value as [
                             listState: ListState<any>,
                             (
@@ -145,8 +145,9 @@ export function createElement(
                         });
                     } else {
                         const state = value as State<any>;
+                        state.subscribe(console.log)
                         state.subscribe(
-                            (newValue) => (element[keyValue] = newValue)
+                            (newValue) => (element[directiveValue] = newValue)
                         );
                     }
                     break;
@@ -154,15 +155,23 @@ export function createElement(
                 case "bind": {
                     const state = value as State<any>;
                     state.subscribe(
-                        (newValue) => (element[keyValue] = newValue)
+                        (newValue) => (element[directiveValue] = newValue)
                     );
                     element.addEventListener(
                         "input",
-                        () => (state.value = (element as any)[keyValue])
+                        () => (state.value = (element as any)[directiveValue])
                     );
+                    break;
+                }
+                case "toggle": {
+                    const state = value as State<any>;
+                    state.subscribe((newValue) =>
+                        element.toggleAttribute(directiveValue, newValue)
+                    );
+                    break;
                 }
                 default:
-                    element.setAttribute(key, value);
+                    element.setAttribute(attributename, value);
             }
         });
 

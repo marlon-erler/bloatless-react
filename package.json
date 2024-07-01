@@ -1,7 +1,11 @@
 {
   "name": "bloatless-react",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "very minimal and flexible react alternative",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/marlon-erler/bloatless-react"
+  },
   "author": "marlon-erler",
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {

@@ -105,26 +105,35 @@ listState.remove(newItem);
 
 Bloatless React provides a modified polyfill for the React API. This means that **you can use JSX** almost like you would in a React project. Additional functionailiy is implemented through directives, similar to Svelte:
 
-### Events
+### Handling Events
 
-The `on:<event>` attribute adds an EventListener
+The `on:<event>` directive adds an EventListener
 
 ```TypeScript
 <button on:click={someFunction}>Click me</button>
 ```
 
-### Dynamic Properties and Content
+### Changing Properties
 
-The `subscribe:<property>` attribute subscribes to a State and changes the element's property. You can use attributes as well as innerText and innerHTML.
+The `subscribe:<property>` directive subscribes to a State and changes the element's property. The property will be changed through the DOM API, so you can use innerText and innerHTML. You can not use this to set attributes.
 
 ```TypeScript
 const name = new React.State("John Doe");
 <span subscribe:innerText={name}></span>
 ```
 
-### Bindings
+### Toggling Attributes
 
-The `bind:<property>` attribute acts like a combination of `subscribe:<property>` and `on:input`. It binds the element's property to the state bi-directinally.
+The `toggle:<attribute>` directive toggles attributes on the HTML element without assigning a value. This is useful for the `disabled` attribute.
+
+```TypeScript
+const shouldBeSelected = new React.State(false);
+<span toggle:selected={shouldBeSelected}></span>
+```
+
+### Binding Input Values
+
+The `bind:<property>` directive acts like a combination of `subscribe:<property>` and `on:input`. It binds the element's property to the state bi-directinally.
 
 ```TypeScript
 const name = new React.State("John Doe");
@@ -133,9 +142,9 @@ const name = new React.State("John Doe");
 <span subscribe:innerText={name}></span>
 ```
 
-### Dynamic Lists
+### Dynamically Creating and Removing Child Elements
 
-The `subscribe:children` attribute subscribes to a ListState and adds/removes child elements accordingly.
+The `subscribe:children` directive subscribes to a ListState and adds/removes child elements accordingly.
 
 ```TypeScript
 import * as React from 'bloatless-react';
@@ -179,3 +188,10 @@ document.body.append(
   </div>
 );
 ```
+
+# Changelog
+## 1.1.0
+- Improve code
+- Add missing `break` statements for directives
+- Add `toggle` directive
+- Improve documentation

@@ -128,7 +128,7 @@ The `toggle:<attribute>` directive toggles attributes on the HTML element withou
 
 ```TypeScript
 const shouldBeSelected = new React.State(false);
-<span toggle:selected={shouldBeSelected}></span>
+<button toggle:disabled={shouldBeSelected}>Some button</button>
 ```
 
 ### Binding Input Values
@@ -137,9 +137,9 @@ The `bind:<property>` directive acts like a combination of `subscribe:<property>
 
 ```TypeScript
 const name = new React.State("John Doe");
+// Both inputs will be in sync
 <input bind:value={name}></input>
-//span will change when the input changes
-<span subscribe:innerText={name}></span>
+<input bind:value={name}></input>
 ```
 
 ### Dynamically Creating and Removing Child Elements
@@ -194,4 +194,7 @@ document.body.append(
 - Improve code
 - Add missing `break` statements for directives
 - Add `toggle` directive
+- Improve documentation
+
+## 1.1.1
 - Improve documentation

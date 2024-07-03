@@ -10,9 +10,7 @@ Bloatless-React is a very minimal and flexible alternative to React.
 -   Really minimal (under 200 lines)
 -   No bloated server or compiler required - just bundle the JavaScript into a static .html file
 
-# Documentation
-
-## Setup
+# Setup
 
 You can use any bundler you want, but esbuild is the fastest and smallest out there:
 
@@ -31,7 +29,7 @@ The following build script will be enough:
 }
 ```
 
-## States
+# States
 
 In Bloatless-React, States are the foundation of how reactivity is implemented. Similar to many frameworks, a State can hold a value and triggers the UI to update when it changes. However, **subscriptions have to be made manually** due to the minimal nature of this project.
 
@@ -101,11 +99,13 @@ listState.add(newItem);
 listState.remove(newItem);
 ```
 
-## UI
+# UI
+
+For a minimalist stylesheet, I'd recommend checking out my project called [carbon-mini](https://github.com/marlon-erler/carbon-mini/).
 
 Bloatless React provides a modified polyfill for the React API. This means that **you can use JSX** almost like you would in a React project. Additional functionailiy is implemented through directives, similar to Svelte:
 
-### Handling Events
+## Handling Events
 
 The `on:<event>` directive adds an EventListener
 
@@ -113,7 +113,7 @@ The `on:<event>` directive adds an EventListener
 <button on:click={someFunction}>Click me</button>
 ```
 
-### Changing Properties
+## Changing Properties
 
 The `subscribe:<property>` directive subscribes to a State and changes the element's property. The property will be changed through the DOM API, so you can use innerText and innerHTML. You can not use this to set attributes.
 
@@ -122,16 +122,16 @@ const name = new React.State("John Doe");
 <span subscribe:innerText={name}></span>
 ```
 
-### Toggling Attributes
+## Toggling Attributes
 
 The `toggle:<attribute>` directive toggles attributes on the HTML element without assigning a value. This is useful for the `disabled` attribute.
 
 ```TypeScript
-const shouldBeSelected = new React.State(false);
-<button toggle:disabled={shouldBeSelected}>Some button</button>
+const isDisabled = new React.State(false);
+<button toggle:disabled={isDisabled}>Some button</button>
 ```
 
-### Binding Input Values
+## Binding Input Values
 
 The `bind:<property>` directive acts like a combination of `subscribe:<property>` and `on:input`. It binds the element's property to the state bi-directinally.
 
@@ -142,7 +142,7 @@ const name = new React.State("John Doe");
 <input bind:value={name}></input>
 ```
 
-### Dynamically Creating and Removing Child Elements
+## Dynamically Creating and Removing Child Elements
 
 The `subscribe:children` directive subscribes to a ListState and adds/removes child elements accordingly.
 
@@ -197,4 +197,8 @@ document.body.append(
 - Improve documentation
 
 ## 1.1.1
+- Improve documentation
+
+## 1.1.2
+- Remove `console.log()` calls
 - Improve documentation

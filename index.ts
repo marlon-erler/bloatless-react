@@ -115,7 +115,6 @@ export function createElement(
     ...children: (HTMLElement | string)[]
 ) {
     const element = document.createElement(tagName);
-    console.log(children);
 
     if (attributes != null)
         Object.entries(attributes).forEach((entry) => {
@@ -145,7 +144,6 @@ export function createElement(
                         });
                     } else {
                         const state = value as State<any>;
-                        state.subscribe(console.log)
                         state.subscribe(
                             (newValue) => (element[directiveValue] = newValue)
                         );

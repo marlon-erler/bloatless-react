@@ -202,3 +202,6 @@ document.body.append(
 ## 1.1.2
 - Remove `console.log()` calls
 - Improve documentation
+
+## 1.1.3
+- Add `on:enter` directive

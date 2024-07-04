@@ -123,7 +123,18 @@ export function createElement(
 
             switch (directiveKey) {
                 case "on": {
-                    element.addEventListener(directiveValue, value);
+                    switch (directiveValue) {
+                        case "enter": {
+                            element.addEventListener("keydown", (e) => {
+                                if ((e as KeyboardEvent).key != "Enter") return;
+                                value();
+                            });
+                            break;
+                        }
+                        default: {
+                            element.addEventListener(directiveValue, value);
+                        }
+                    }
                     break;
                 }
                 case "subscribe": {

@@ -30,10 +30,12 @@ export class State<T> {
     private _value: T;
     private _bindings = new Set<StateSubscription<T>>();
 
+    // init
     constructor(initialValue: T) {
         this._value = initialValue;
     }
 
+    // value
     get value(): T {
         return this._value;
     }
@@ -44,6 +46,7 @@ export class State<T> {
         this.callSubscriptions();
     }
 
+    // subscriptions
     callSubscriptions(): void {
         this._bindings.forEach((fn) => fn(this._value));
     }
@@ -58,10 +61,12 @@ export class ListState<T extends Identifiable> extends State<Set<T>> {
     private additionHandlers = new Set<AdditionSubscription<T>>();
     private removalHandlers = new Map<UUID, RemovalSubscription<T>>();
 
+    // init
     constructor() {
         super(new Set<T>());
     }
 
+    // list
     add(...items: T[]): void {
         items.forEach((item) => {
             this.value.add(item);
@@ -80,6 +85,7 @@ export class ListState<T extends Identifiable> extends State<Set<T>> {
         });
     }
 
+    // handlers
     handleAddition(handler: AdditionSubscription<T>): void {
         this.additionHandlers.add(handler);
     }

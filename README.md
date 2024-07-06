@@ -70,7 +70,7 @@ summary.subscribe(console.log);
 
 ## ListStates
 
-A ListState\<T\> is a State whose value is a Set\<T\>. A ListState allows specific subscriptions to detect when items get added and removed. This allows dynamic lists to run efficiently.
+A `ListState<T>` is a State whose value is a `Set<T>`. A ListState allows specific subscriptions to detect when items get added and removed. This allows dynamic lists to run efficiently.
 
 ```TypeScript
 // Import
@@ -118,12 +118,10 @@ Bloatless React provides a modified polyfill for the React API. This means that 
 
 ## Handling Events
 
-The `on:<event>` directive adds an EventListener.
-
-Additional events:
-- `on:enter`
+The `on:<event>` directive adds an EventListener. This directive also supports the `on:enter` event.
 
 ```TypeScript
+<input on:enter={someFunction}></input>
 <button on:click={someFunction}>Click me</button>
 ```
 
@@ -231,3 +229,4 @@ Other changes:
 - Add State persistence
 - Add error description when utilizing `subscribe:children` incorrectly
 - Fix bug where ListState subscriptions were not called
+- Improve documentation

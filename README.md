@@ -218,7 +218,7 @@ document.body.append(
 ## 1.1.3
 - Add `on:enter` directive
 
-## 1.1.4
+## 1.2.0
 **BREAKING CHANGES**
 - Replace UUID class with function;
   - `new UUID()` => `UUID() returns string`

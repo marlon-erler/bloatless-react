@@ -5,20 +5,16 @@ import { v4 } from "uuid";
 */
 /* Types */
 export interface Identifiable {
-    uuid: UUID;
+    id: string;
+}
+
+export interface Stringifiable {
+    toString: () => string;
 }
 
 /* Utility */
-export class UUID {
-    readonly value: string;
-
-    constructor() {
-        this.value = v4();
-    }
-
-    toString(): string {
-        return this.value;
-    }
+export function UUID(): string {
+    return v4();
 }
 
 /* State */
@@ -55,15 +51,20 @@ export class State<T> {
         this._bindings.add(fn);
         fn(this._value);
     }
+
+    // stringify
+    toString(): string {
+        return JSON.stringify(this._value);
+    }
 }
 
 export class ListState<T extends Identifiable> extends State<Set<T>> {
     private additionHandlers = new Set<AdditionSubscription<T>>();
-    private removalHandlers = new Map<UUID, RemovalSubscription<T>>();
+    private removalHandlers = new Map<string, RemovalSubscription<T>>();
 
     // init
-    constructor() {
-        super(new Set<T>());
+    constructor(initialItems?: T[]) {
+        super(new Set<T>(initialItems));
     }
 
     // list
@@ -72,29 +73,40 @@ export class ListState<T extends Identifiable> extends State<Set<T>> {
             this.value.add(item);
             this.additionHandlers.forEach((handler) => handler(item));
         });
+        this.callSubscriptions();
     }
 
     remove(...items: T[]): void {
         items.forEach((item) => {
             this.value.delete(item);
-            const uuid = item.uuid;
+            const id = item.id;
 
-            if (!this.removalHandlers.has(uuid)) return;
-            this.removalHandlers.get(uuid)!(item);
-            this.removalHandlers.delete(uuid);
+            if (!this.removalHandlers.has(id)) return;
+            this.removalHandlers.get(id)!(item);
+            this.removalHandlers.delete(id);
         });
+        this.callSubscriptions();
     }
 
     // handlers
     handleAddition(handler: AdditionSubscription<T>): void {
         this.additionHandlers.add(handler);
+        [...this.value.values()].forEach(handler);
     }
 
     handleRemoval(item: T, handler: RemovalSubscription<T>): void {
-        this.removalHandlers.set(item.uuid, handler);
+        this.removalHandlers.set(item.id, handler);
+    }
+
+    // stringification
+    toString(): string {
+        const array = [...this.value];
+        const json = JSON.stringify(array);
+        return json;
     }
 }
 
+// UTILITY
 export function createProxyState<T>(
     statesToSubscibe: State<any>[],
     fn: () => T
@@ -104,6 +116,47 @@ export function createProxyState<T>(
         state.subscribe(() => (proxyState.value = fn()))
     );
     return proxyState;
+}
+
+function persistState(localStorageKey: string, state: State<any>) {
+    state.subscribe(() => {
+        const stringifiedValue = state.toString();
+        localStorage.setItem(localStorageKey, stringifiedValue);
+    });
+}
+
+export function restoreState<T>(
+    localStorageKey: string,
+    initialStateValue: T
+): State<T> {
+    const storedString =
+        localStorage.getItem(localStorageKey) ??
+        JSON.stringify(initialStateValue);
+    const convertedValue = JSON.parse(storedString);
+
+    const state = new State(convertedValue);
+    persistState(localStorageKey, state);
+
+    return state;
+}
+
+export function restoreListState<T extends Identifiable>(
+    localStorageKey: string
+): ListState<T> {
+    const storedString = localStorage.getItem(localStorageKey) ?? "";
+
+    let initialItems: any[] = [];
+
+    try {
+        const array = JSON.parse(storedString);
+        if (!Array.isArray(array)) throw "";
+        initialItems = array;
+    } catch {}
+
+    const state = new ListState<T>(initialItems);
+    persistState(localStorageKey, state);
+
+    return state;
 }
 
 export type ListItemConverter<T extends Identifiable> = (
@@ -145,20 +198,25 @@ export function createElement(
                 }
                 case "subscribe": {
                     if (directiveValue == "children") {
-                        const [listState, toElement] = value as [
-                            listState: ListState<any>,
-                            (
-                                item: any,
-                                listState: ListState<any>
-                            ) => HTMLElement
-                        ];
-                        listState.handleAddition((newItem) => {
-                            const child = toElement(newItem, listState);
-                            listState.handleRemoval(newItem, () =>
-                                child.remove()
-                            );
-                            element.append(child);
-                        });
+                        try {
+                            const [listState, toElement] = value as [
+                                listState: ListState<any>,
+                                (
+                                    item: any,
+                                    listState: ListState<any>
+                                ) => HTMLElement
+                            ];
+
+                            listState.handleAddition((newItem) => {
+                                const child = toElement(newItem, listState);
+                                listState.handleRemoval(newItem, () =>
+                                    child.remove()
+                                );
+                                element.append(child);
+                            });
+                        } catch {
+                            throw `error: cannot process subscribe:children directive because ListItemConverter is not defined. Usage: "subscribe:children={[list, converter]}"; you can find a more detailed example in the documentation`;
+                        }
                     } else {
                         const state = value as State<any>;
                         state.subscribe(

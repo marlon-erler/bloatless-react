@@ -78,7 +78,7 @@ import * as React from 'bloatless-react';
 
 // Define Item type
 class Item implements React.Identifiable {
-  uuid = new React.UUID();
+  id = React.UUID();
   constructor(public text: string) {}
 }
 
@@ -97,6 +97,17 @@ listState.add(newItem);
 
 // Remove item
 listState.remove(newItem);
+```
+
+## Persistence
+
+States can persist through reloads via LocalStorage. To implement this, modify your code like this:
+```diff
+-const myState = new React.State("hello");
++const myState = React.restoreState("my-state", "hello");
+
+-const myListState = new React.ListState<Item>();
++const myListState = React.restoreListState<Item>("my-list-state");
 ```
 
 # UI
@@ -154,7 +165,7 @@ import * as React from 'bloatless-react';
 
 // Define Item
 class Item implements React.Identifiable {
-  uuid = new React.UUID();
+  id = React.UUID();
   constructor(public text: string) {}
 }
 
@@ -208,3 +219,15 @@ document.body.append(
 
 ## 1.1.3
 - Add `on:enter` directive
+
+## 1.1.4
+**BREAKING CHANGES**
+- Replace UUID class with function;
+  - `new UUID()` => `UUID() returns string`
+- Replace definition of `Identifiable`
+  - now has `id: string` instead of `uuid: UUID()`
+
+Other changes:
+- Add State persistence
+- Add error description when utilizing `subscribe:children` incorrectly
+- Fix bug where ListState subscriptions were not called

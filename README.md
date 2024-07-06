@@ -107,7 +107,10 @@ Bloatless React provides a modified polyfill for the React API. This means that 
 
 ## Handling Events
 
-The `on:<event>` directive adds an EventListener
+The `on:<event>` directive adds an EventListener.
+
+Additional events:
+- `on:enter`
 
 ```TypeScript
 <button on:click={someFunction}>Click me</button>

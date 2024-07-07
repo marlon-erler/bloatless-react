@@ -243,6 +243,13 @@ export function createElement(
                     );
                     break;
                 }
+                case "set": {
+                    const state = value as State<any>;
+                    state.subscribe((newValue) =>
+                        element.setAttribute(directiveValue, newValue)
+                    );
+                    break;
+                }
                 default:
                     element.setAttribute(attributename, value);
             }

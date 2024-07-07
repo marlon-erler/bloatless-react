@@ -7,7 +7,7 @@ Bloatless-React is a very minimal and flexible alternative to React.
 -   Supports reactivity through States
 -   Supports JSX for components
 -   Written in TypeScript
--   Really minimal (under 200 lines)
+-   Really minimal (under 300 lines)
 -   No bloated server or compiler required - just bundle the JavaScript into a static .html file
 
 # Setup
@@ -127,11 +127,19 @@ The `on:<event>` directive adds an EventListener. This directive also supports t
 
 ## Changing Properties
 
-The `subscribe:<property>` directive subscribes to a State and changes the element's property. The property will be changed through the DOM API, so you can use innerText and innerHTML. You can not use this to set attributes.
+The `subscribe:<property>` directive subscribes to a State and changes a property of the element. Use this for properties available via the DOM model (ie. innerText, innerHTML).
 
 ```TypeScript
 const name = new React.State("John Doe");
 <span subscribe:innerText={name}></span>
+```
+
+## Setting Attributes
+
+The `set:<attribute>` directive subscribes to a State and changes an attribute of the element.
+
+```TypeScript
+<span set:someAttribute={attributeValue}></span>
 ```
 
 ## Toggling Attributes
@@ -230,3 +238,6 @@ Other changes:
 - Add error description when utilizing `subscribe:children` incorrectly
 - Fix bug where ListState subscriptions were not called
 - Improve documentation
+
+## 1.2.1
+- Add `set:<attribute>` directive

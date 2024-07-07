@@ -176,9 +176,11 @@ class Item implements React.Identifiable {
 }
 
 // This ListItemConverter creates an HTML element based on an Item
-const convertItem: React.ListItemConverter<Item> = (item, listState) => {
+const convertItem: React.ListItemConverter<Item> = (item) => {
   function remove() {
-    listState.remove(item);
+    // you should keep track of your data in a separate model
+    // keep your removeListItem() method there
+    myDataModel.removeListItem(item);
   }
   return (
     <span>
@@ -241,3 +243,6 @@ Other changes:
 
 ## 1.2.1
 - Add `set:<attribute>` directive
+
+## 1.2.2
+- 

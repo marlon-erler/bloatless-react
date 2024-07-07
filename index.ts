@@ -160,8 +160,7 @@ export function restoreListState<T extends Identifiable>(
 }
 
 export type ListItemConverter<T extends Identifiable> = (
-    item: T,
-    listState: ListState<T>
+    item: T
 ) => HTMLElement;
 
 /*

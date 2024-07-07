@@ -144,11 +144,12 @@ The `set:<attribute>` directive subscribes to a State and changes an attribute o
 
 ## Toggling Attributes
 
-The `toggle:<attribute>` directive toggles attributes on the HTML element without assigning a value. This is useful for the `disabled` attribute.
+The `toggle:<attribute>` directive toggles attributes on the HTML element without assigning a value. This is useful for the `disabled` attribute. You can use states or normal variables.
 
 ```TypeScript
 const isDisabled = new React.State(false);
 <button toggle:disabled={isDisabled}>Some button</button>
+<button toggle:disabled={false}>Some button</button>
 ```
 
 ## Binding Input Values
@@ -247,3 +248,6 @@ Other changes:
 ## 1.2.2
 - Remove list parameter from `ListItemConverter`
 - Add `clear()` method to `ListState`
+
+## 1.2.3
+- Allow `toggle:<attribute>` to be used without a state

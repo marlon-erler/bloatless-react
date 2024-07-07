@@ -89,7 +89,7 @@ export class ListState<T extends Identifiable> extends State<Set<T>> {
     }
 
     clear() {
-        this.remove(...this.value.values())
+        this.remove(...this.value.values());
     }
 
     // handlers
@@ -240,10 +240,14 @@ export function createElement(
                     break;
                 }
                 case "toggle": {
-                    const state = value as State<any>;
-                    state.subscribe((newValue) =>
-                        element.toggleAttribute(directiveValue, newValue)
-                    );
+                    if (value.subscribe) {
+                        const state = value as State<any>;
+                        state.subscribe((newValue) =>
+                            element.toggleAttribute(directiveValue, newValue)
+                        );
+                    } else {
+                        element.toggleAttribute(directiveValue, value);
+                    }
                     break;
                 }
                 case "set": {

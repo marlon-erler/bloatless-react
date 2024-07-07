@@ -88,6 +88,10 @@ export class ListState<T extends Identifiable> extends State<Set<T>> {
         this.callSubscriptions();
     }
 
+    clear() {
+        this.remove(...this.value.values())
+    }
+
     // handlers
     handleAddition(handler: AdditionSubscription<T>): void {
         this.additionHandlers.add(handler);

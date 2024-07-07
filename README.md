@@ -245,4 +245,5 @@ Other changes:
 - Add `set:<attribute>` directive
 
 ## 1.2.2
-- 
+- Remove list parameter from `ListItemConverter`
+- Add `clear()` method to `ListState`

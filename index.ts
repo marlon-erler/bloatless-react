@@ -214,7 +214,7 @@ export function createElement(
                                     child.remove()
                                 );
                                 element.append(child);
-                                child.scrollIntoView();
+                                element.scrollTop = element.scrollHeight;
                             });
                         } catch {
                             throw `error: cannot process subscribe:children directive because ListItemConverter is not defined. Usage: "subscribe:children={[list, converter]}"; you can find a more detailed example in the documentation`;

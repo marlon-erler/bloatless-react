@@ -21,6 +21,7 @@ touch src/index.tsx dist/index.html
 ```
 
 The following build script will be enough:
+
 ```JSON
 {
   "scripts": {
@@ -102,6 +103,7 @@ listState.remove(newItem);
 ## Persistence
 
 States can persist through reloads via LocalStorage. To implement this, modify your code like this:
+
 ```diff
 -const myState = new React.State("hello");
 +const myState = React.restoreState("my-state", "hello");
@@ -213,44 +215,60 @@ document.body.append(
 ```
 
 # Changelog
+
 ## 1.1.0
-- Improve code
-- Add missing `break` statements for directives
-- Add `toggle` directive
-- Improve documentation
+
+-   Improve code
+-   Add missing `break` statements for directives
+-   Add `toggle` directive
+-   Improve documentation
 
 ## 1.1.1
-- Improve documentation
+
+-   Improve documentation
 
 ## 1.1.2
-- Remove `console.log()` calls
-- Improve documentation
+
+-   Remove `console.log()` calls
+-   Improve documentation
 
 ## 1.1.3
-- Add `on:enter` directive
+
+-   Add `on:enter` directive
 
 ## 1.2.0
+
 **BREAKING CHANGES**
-- Replace UUID class with function;
-  - `new UUID()` => `UUID() returns string`
-- Replace definition of `Identifiable`
-  - now has `id: string` instead of `uuid: UUID()`
+
+-   Replace UUID class with function;
+    -   `new UUID()` => `UUID() returns string`
+-   Replace definition of `Identifiable`
+    -   now has `id: string` instead of `uuid: UUID()`
 
 Other changes:
-- Add State persistence
-- Add error description when utilizing `subscribe:children` incorrectly
-- Fix bug where ListState subscriptions were not called
-- Improve documentation
+
+-   Add State persistence
+-   Add error description when utilizing `subscribe:children` incorrectly
+-   Fix bug where ListState subscriptions were not called
+-   Improve documentation
 
 ## 1.2.1
-- Add `set:<attribute>` directive
+
+-   Add `set:<attribute>` directive
 
 ## 1.2.2
-- Remove list parameter from `ListItemConverter`
-- Add `clear()` method to `ListState`
+
+-   Remove list parameter from `ListItemConverter`
+-   Add `clear()` method to `ListState`
 
 ## 1.2.3
-- Allow `toggle:<attribute>` to be used without a state
+
+-   Allow `toggle:<attribute>` to be used without a state
 
 ## 1.2.4
-- On `subscribe:children`, scroll new elements into view
+
+-   On `subscribe:children`, scroll new elements into view
+
+## 1.2.5
+
+-   Instead of using `scrollIntoView()`, `subscribe:children` now scrolls to the bottom

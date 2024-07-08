@@ -205,14 +205,11 @@ export function createElement(
                         try {
                             const [listState, toElement] = value as [
                                 listState: ListState<any>,
-                                (
-                                    item: any,
-                                    listState: ListState<any>
-                                ) => HTMLElement
+                                ListItemConverter<any>
                             ];
 
                             listState.handleAddition((newItem) => {
-                                const child = toElement(newItem, listState);
+                                const child = toElement(newItem);
                                 listState.handleRemoval(newItem, () =>
                                     child.remove()
                                 );

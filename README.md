@@ -251,3 +251,6 @@ Other changes:
 
 ## 1.2.3
 - Allow `toggle:<attribute>` to be used without a state
+
+## 1.2.4
+- On `subscribe:children`, scroll new elements into view

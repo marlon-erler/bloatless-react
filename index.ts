@@ -201,6 +201,7 @@ export function createElement(
                 }
                 case "subscribe": {
                     if (directiveValue == "children") {
+                        element.style.scrollBehavior = "smooth";
                         try {
                             const [listState, toElement] = value as [
                                 listState: ListState<any>,
@@ -216,6 +217,7 @@ export function createElement(
                                     child.remove()
                                 );
                                 element.append(child);
+                                child.scrollIntoView();
                             });
                         } catch {
                             throw `error: cannot process subscribe:children directive because ListItemConverter is not defined. Usage: "subscribe:children={[list, converter]}"; you can find a more detailed example in the documentation`;

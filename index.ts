@@ -143,9 +143,7 @@ export function restoreState<T>(
     return state;
 }
 
-export function restoreListState<T>(
-    localStorageKey: string
-): ListState<T> {
+export function restoreListState<T>(localStorageKey: string): ListState<T> {
     const storedString = localStorage.getItem(localStorageKey) ?? "";
 
     let initialItems: any[] = [];
@@ -162,9 +160,7 @@ export function restoreListState<T>(
     return state;
 }
 
-export type ListItemConverter<T> = (
-    item: T
-) => HTMLElement;
+export type ListItemConverter<T> = (item: T) => HTMLElement;
 
 /*
     JSX
@@ -199,31 +195,11 @@ export function createElement(
                     break;
                 }
                 case "subscribe": {
-                    if (directiveValue == "children") {
-                        element.style.scrollBehavior = "smooth";
-                        try {
-                            const [listState, toElement] = value as [
-                                listState: ListState<any>,
-                                ListItemConverter<any>
-                            ];
+                    const state = value as State<any>;
+                    state.subscribe(
+                        (newValue) => (element[directiveValue] = newValue)
+                    );
 
-                            listState.handleAddition((newItem) => {
-                                const child = toElement(newItem);
-                                listState.handleRemoval(newItem, () =>
-                                    child.remove()
-                                );
-                                element.append(child);
-                                element.scrollTop = element.scrollHeight;
-                            });
-                        } catch {
-                            throw `error: cannot process subscribe:children directive because ListItemConverter is not defined. Usage: "subscribe:children={[list, converter]}"; you can find a more detailed example in the documentation`;
-                        }
-                    } else {
-                        const state = value as State<any>;
-                        state.subscribe(
-                            (newValue) => (element[directiveValue] = newValue)
-                        );
-                    }
                     break;
                 }
                 case "bind": {
@@ -254,6 +230,44 @@ export function createElement(
                         element.setAttribute(directiveValue, newValue)
                     );
                     break;
+                }
+                case "children": {
+                    switch (directiveValue) {
+                        case "set": {
+                            const state = value as State<any>;
+                            state.subscribe((newValue) => {
+                                element.innerHTML = "";
+                                element.append(newValue);
+                            });
+                            break;
+                        }
+                        case "append":
+                        case "appendandscroll":
+                        case "prepend": {
+                            element.style.scrollBehavior = "smooth";
+                            try {
+                                const [listState, toElement] = value as [
+                                    listState: ListState<any>,
+                                    ListItemConverter<any>
+                                ];
+
+                                listState.handleAddition((newItem) => {
+                                    const child = toElement(newItem);
+                                    listState.handleRemoval(newItem, () =>
+                                        child.remove()
+                                    );
+
+                                    if (directiveValue == "append") {
+                                        element.append(child);
+                                    } else if (directiveValue == "prepend") {
+                                        element.prepend(child);
+                                    }
+                                });
+                            } catch {
+                                throw `error: cannot process subscribe:children directive because ListItemConverter is not defined. Usage: "subscribe:children={[list, converter]}"; you can find a more detailed example in the documentation`;
+                            }
+                        }
+                    }
                 }
                 default:
                     element.setAttribute(attributename, value);

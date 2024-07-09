@@ -167,49 +167,70 @@ const name = new React.State("John Doe");
 
 ## Dynamically Creating and Removing Child Elements
 
-The `subscribe:children` directive subscribes to a ListState and adds/removes child elements accordingly.
+The **children:set** subscribes to a `State<HTMLElement>` and replaces the element's contents with the State's value.
 
 ```TypeScript
-import * as React from 'bloatless-react';
+let count = 0;
+const childElement = new React.State(<div>0</div>);
 
-// Define Item
-class Item implements React.Identifiable {
-  id = React.UUID();
-  constructor(public text: string) {}
+function change() {
+  count++;
+  childElement.value = <div>{count}</div>;
 }
 
-// This ListItemConverter creates an HTML element based on an Item
-const convertItem: React.ListItemConverter<Item> = (item) => {
+document.body.append(
+  <div>
+    <button on:click={change}>+</button>
+    <div children:set={childElement}></div>
+  </div>
+);
+```
+
+The **children:append** and **children:prepend** directives subscribe to a ListState and sync the element's contents accordingly.
+
+The ListItemConverter turns an item of the ListState's into an HTMLElement.
+
+```TypeScript
+import * as React from "bloatless-react";
+
+// Model
+class MyDataModel {
+  items = new React.ListState<string>();
+  newItemName = new React.State("");
+
+  addItem = () => {
+    console.log(this);
+    this.items.add(this.newItemName.value);
+  };
+  removeItem = (item: string) => {
+    this.items.remove(item);
+  };
+}
+
+const model = new MyDataModel();
+
+// Item -> Element
+const convertItem: React.ListItemConverter<string> = (item) => {
   function remove() {
-    // you should keep track of your data in a separate model
-    // keep your removeListItem() method there
-    myDataModel.removeListItem(item);
+    model.removeItem(item);
   }
   return (
     <span>
-      {item.text}
+      {item}
       <button on:click={remove}>Remove</button>
     </span>
   );
 };
 
-// Create ListState
-const listState = new React.ListState<Item>();
-
-// Prepare adding items
-const newItemName = new React.State("");
-
-function addItem() {
-  const newItem = new Item(newItemName.value);
-  listState.add(newItem);
-}
-
 // Build UI
 document.body.append(
   <div>
-    <input bind:value={newItemName}></input>
-    <button on:click={addItem}>Add</button>
-    <div subscribe:children={[listState, convertItem]}></div>
+    <input bind:value={model.newItemName}></input>
+      <button on:click={model.addItem}>Add</button>
+      <div
+        class="flex-column"
+        children:append={[model.items, convertItem]}
+      ></div>
   </div>
 );
 ```
@@ -272,3 +293,14 @@ Other changes:
 ## 1.2.5
 
 -   Instead of using `scrollIntoView()`, `subscribe:children` now scrolls to the bottom
+
+## 1.3.0
+
+**BREAKING CHANGES**
+
+-   Replace `set:children` with `children:append`
+
+Other changes
+
+-   Add `children:<action>` directive
+-   Improve documentation

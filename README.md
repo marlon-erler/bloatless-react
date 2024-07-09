@@ -167,7 +167,7 @@ const name = new React.State("John Doe");
 
 ## Dynamically Creating and Removing Child Elements
 
-The **children:set** subscribes to a `State<HTMLElement>` and replaces the element's contents with the State's value.
+The **children:set** subscribes to a `State<HTMLElement>` or `State<HTMLElement[]>` and replaces the element's contents with the State's value.
 
 ```TypeScript
 let count = 0;
@@ -304,3 +304,7 @@ Other changes
 
 -   Add `children:<action>` directive
 -   Improve documentation
+
+## 1.3.1
+
+- Allow arrays to be passed to `children:set`

@@ -234,10 +234,10 @@ export function createElement(
                 case "children": {
                     switch (directiveValue) {
                         case "set": {
-                            const state = value as State<any>;
+                            const state = value as State<Node | Node[]>;
                             state.subscribe((newValue) => {
                                 element.innerHTML = "";
-                                element.append(newValue);
+                                element.append(...[newValue].flat());
                             });
                             break;
                         }

@@ -58,9 +58,9 @@ export class State<T> {
     }
 }
 
-export class ListState<T extends Identifiable> extends State<Set<T>> {
+export class ListState<T> extends State<Set<T>> {
     private additionHandlers = new Set<AdditionSubscription<T>>();
-    private removalHandlers = new Map<string, RemovalSubscription<T>>();
+    private removalHandlers = new Map<T, RemovalSubscription<T>>();
 
     // init
     constructor(initialItems?: T[]) {
@@ -79,11 +79,10 @@ export class ListState<T extends Identifiable> extends State<Set<T>> {
     remove(...items: T[]): void {
         items.forEach((item) => {
             this.value.delete(item);
-            const id = item.id;
 
-            if (!this.removalHandlers.has(id)) return;
-            this.removalHandlers.get(id)!(item);
-            this.removalHandlers.delete(id);
+            if (!this.removalHandlers.has(item)) return;
+            this.removalHandlers.get(item)!(item);
+            this.removalHandlers.delete(item);
         });
         this.callSubscriptions();
     }
@@ -99,7 +98,7 @@ export class ListState<T extends Identifiable> extends State<Set<T>> {
     }
 
     handleRemoval(item: T, handler: RemovalSubscription<T>): void {
-        this.removalHandlers.set(item.id, handler);
+        this.removalHandlers.set(item, handler);
     }
 
     // stringification
@@ -144,7 +143,7 @@ export function restoreState<T>(
     return state;
 }
 
-export function restoreListState<T extends Identifiable>(
+export function restoreListState<T>(
     localStorageKey: string
 ): ListState<T> {
     const storedString = localStorage.getItem(localStorageKey) ?? "";
@@ -163,7 +162,7 @@ export function restoreListState<T extends Identifiable>(
     return state;
 }
 
-export type ListItemConverter<T extends Identifiable> = (
+export type ListItemConverter<T> = (
     item: T
 ) => HTMLElement;
 

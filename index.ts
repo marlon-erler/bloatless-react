@@ -230,7 +230,7 @@ export function restoreMapState<T>(
     return state;
 }
 
-export type ListItemConverter<T> = (item: T) => HTMLElement;
+export type StateItemConverter<T> = (item: T) => HTMLElement;
 
 /*
     JSX
@@ -318,7 +318,7 @@ export function createElement(
                             try {
                                 const [listState, toElement] = value as [
                                     listState: ListState<any>,
-                                    ListItemConverter<any>
+                                    StateItemConverter<any>
                                 ];
 
                                 listState.handleAddition((newItem) => {
@@ -334,7 +334,7 @@ export function createElement(
                                     }
                                 });
                             } catch {
-                                throw `error: cannot process subscribe:children directive because ListItemConverter is not defined. Usage: "subscribe:children={[list, converter]}"; you can find a more detailed example in the documentation`;
+                                throw `error: cannot process subscribe:children directive because StateItemConverter is not defined. Usage: "subscribe:children={[list, converter]}"; you can find a more detailed example in the documentation`;
                             }
                         }
                     }

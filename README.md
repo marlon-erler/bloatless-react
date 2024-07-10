@@ -236,9 +236,9 @@ document.body.append(
 );
 ```
 
-The **children:append** and **children:prepend** directives subscribe to a ListState and sync the element's contents accordingly.
+The **children:append** and **children:prepend** directives subscribe to a `ListState` or `MapState` and sync the element's contents accordingly.
 
-The ListItemConverter turns an item of the ListState's into an HTMLElement.
+The StateItemConverter turns an item of the State into an HTMLElement.
 
 ```TypeScript
 import * as React from "bloatless-react";
@@ -260,7 +260,7 @@ class MyDataModel {
 const model = new MyDataModel();
 
 // Item -> Element
-const convertItem: React.ListItemConverter<string> = (item) => {
+const convertItem: React.StateItemConverter<string> = (item: string) => {
   function remove() {
     model.removeItem(item);
   }
@@ -363,3 +363,8 @@ Other changes
 
 -   Allow initial value on `restoreListState()`
 -   Add `MapState` and `restoreMapState()`
+
+## 1.3.3
+
+- Rename `ListItemConverter` to `StateItemConverter`
+- Improve documentation

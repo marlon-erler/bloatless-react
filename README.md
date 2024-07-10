@@ -368,3 +368,7 @@ Other changes
 
 - Rename `ListItemConverter` to `StateItemConverter`
 - Improve documentation
+
+## 1.3.4
+
+- Remove old item from `MapState` when calling `MapState.set()` for an existing key

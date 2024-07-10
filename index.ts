@@ -120,6 +120,7 @@ export class MapState<T> extends State<Map<string, T>> {
 
     // list
     set(key: string, item: T): void {
+        this.remove(key);
         this.value.set(key, item);
         this.additionHandlers.forEach((handler) => handler(item));
         this.callSubscriptions();

@@ -71,33 +71,71 @@ summary.subscribe(console.log);
 
 ## ListStates
 
-A `ListState<T>` is a State whose value is a `Set<T>`. A ListState allows specific subscriptions to detect when items get added and removed. This allows dynamic lists to run efficiently.
+A `ListState<T>` is a State whose value is a `Set<T>`. A ListState allows specific subscriptions to detect when items get added and removed.
 
 ```TypeScript
-// Import
-import * as React from 'bloatless-react';
+import * as React from "bloatless-react";
 
-// Define Item type
-class Item implements React.Identifiable {
-  id = React.UUID();
-  constructor(public text: string) {}
-}
+const listState = new React.ListState([1, 2]);
 
-// Create ListState
-const listState = new React.ListState<Item>();
+console.log(listState.value);
+// Set [ 1, 2 ]
 
-// Handle addition and removal
-listState.handleAddition((newItem) => {
-  console.log(`${newItem.text} was added`);
-  listState.handleRemoval(newItem, () => console.log(`${newItem.text} was removed`));
+listState.handleAddition((newItem: number) => {
+  console.log("+", newItem);
+
+  listState.handleRemoval(newItem, () => {
+    console.log("-", newItem);
+  });
 });
+// + 1
+// + 2
 
-// Add item
-const newItem = new Item("hello, world!");
-listState.add(newItem);
+listState.add(3);
+// + 3
 
-// Remove item
-listState.remove(newItem);
+listState.remove(1);
+// - 1
+
+listState.clear();
+// - 2
+// - 3
+
+```
+
+## MapStates
+
+A `MapState<T>` is a State whose value is a `Map<string, T>`. A ListState allows specific subscriptions to detect when items get added and removed.
+
+```TypeScript
+import * as React from "bloatless-react";
+
+const mapState = new React.MapState<number>([
+  ["a", 1],
+  ["b", 2],
+])
+
+console.log(mapState.value);
+// Map { a → 1, b → 2 }
+
+mapState.handleAddition((newItem: number) => {
+  console.log("+", newItem)
+
+  mapState.handleRemoval(newItem, () => {
+    console.log("-", newItem)
+  })
+});
+// + 1
+// + 2
+
+mapState.set("c", 3);
+// + 3
+
+mapState.remove("a");
+// - 1
+
+mapState.clear();
+// Map {}
 ```
 
 ## Persistence
@@ -105,11 +143,23 @@ listState.remove(newItem);
 States can persist through reloads via LocalStorage. To implement this, modify your code like this:
 
 ```diff
+normal State
 -const myState = new React.State("hello");
 +const myState = React.restoreState("my-state", "hello");
 
--const myListState = new React.ListState<Item>();
-+const myListState = React.restoreListState<Item>("my-list-state");
+MapState
+-const myMapState = new React.MapState<T>();
++const myMapState = React.restoreMapState<T>("my-map-state");
+OR
+-const myMapState = new React.MapState<number>([["a", 1], ["b", 2]]);
++const myMapState = React.restoreMapState<number>("my-map-state", [["a", 1], ["b", 2]]);
+
+ListState
+-const myListState = new React.ListState<T>();
++const myListState = React.restoreListState<T>("my-list-state");
+OR
+-const myListState = new React.ListState<number>([1, 2]);
++const myListState = React.restoreListState<number>("my-list-state", [1, 2]);
 ```
 
 # UI
@@ -307,4 +357,9 @@ Other changes
 
 ## 1.3.1
 
-- Allow arrays to be passed to `children:set`
+-   Allow arrays to be passed to `children:set`
+
+## 1.3.2
+
+-   Allow initial value on `restoreListState()`
+-   Add `MapState` and `restoreMapState()`

@@ -103,7 +103,58 @@ export class ListState<T> extends State<Set<T>> {
 
     // stringification
     toString(): string {
-        const array = [...this.value];
+        const array = [...this.value.values()];
+        const json = JSON.stringify(array);
+        return json;
+    }
+}
+
+export class MapState<T> extends State<Map<string, T>> {
+    private additionHandlers = new Set<AdditionSubscription<T>>();
+    private removalHandlers = new Map<T, RemovalSubscription<T>>();
+
+    // init
+    constructor(initialItems?: [string, T][]) {
+        super(new Map<string, T>(initialItems));
+    }
+
+    // list
+    set(key: string, item: T): void {
+        this.value.set(key, item);
+        this.additionHandlers.forEach((handler) => handler(item));
+        this.callSubscriptions();
+    }
+
+    remove(key: string): void {
+        const item = this.value.get(key);
+        if (!item) return;
+
+        this.value.delete(key);
+        this.callSubscriptions();
+
+        if (!this.removalHandlers.has(item)) return;
+        this.removalHandlers.get(item)!(item);
+        this.removalHandlers.delete(item);
+    }
+
+    clear() {
+        this.value.clear();
+        this.callSubscriptions();
+    }
+
+    // handlers
+    handleAddition(handler: AdditionSubscription<T>): void {
+        this.additionHandlers.add(handler);
+        [...this.value.values()].forEach(handler);
+    }
+
+    handleRemoval(item: T, handler: RemovalSubscription<T>): void {
+        this.removalHandlers.set(item, handler);
+    }
+
+    // stringification
+    toString(): string {
+        const array = [...this.value.entries()];
         const json = JSON.stringify(array);
         return json;
     }
@@ -143,10 +194,11 @@ export function restoreState<T>(
     return state;
 }
 
-export function restoreListState<T>(localStorageKey: string): ListState<T> {
+export function restoreListState<T>(
+    localStorageKey: string,
+    initialItems: any[] = []
+): ListState<T> {
     const storedString = localStorage.getItem(localStorageKey) ?? "";
-
-    let initialItems: any[] = [];
 
     try {
         const array = JSON.parse(storedString);
@@ -155,6 +207,24 @@ export function restoreListState<T>(localStorageKey: string): ListState<T> {
     } catch {}
 
     const state = new ListState<T>(initialItems);
+    persistState(localStorageKey, state);
+
+    return state;
+}
+
+export function restoreMapState<T>(
+    localStorageKey: string,
+    initialItems: [string, any][] = []
+): MapState<T> {
+    const storedString = localStorage.getItem(localStorageKey) ?? "";
+
+    try {
+        const array = JSON.parse(storedString);
+        if (!Array.isArray(array)) throw "";
+        initialItems = array;
+    } catch {}
+
+    const state = new MapState<T>(initialItems);
     persistState(localStorageKey, state);
 
     return state;

@@ -135,7 +135,8 @@ mapState.remove("a");
 // - 1
 
 mapState.clear();
-// Map {}
+// - 2
+// - 3
 ```
 
 ## Persistence
@@ -372,3 +373,7 @@ Other changes
 ## 1.3.4
 
 - Remove old item from `MapState` when calling `MapState.set()` for an existing key
+
+## 1.3.5
+
+- Fix bug where `MapState.clear()` would not trigger removal handlers

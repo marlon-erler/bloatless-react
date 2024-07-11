@@ -139,8 +139,7 @@ export class MapState<T> extends State<Map<string, T>> {
     }
 
     clear() {
-        this.value.clear();
-        this.callSubscriptions();
+        [...this.value.keys()].forEach((key) => this.remove(key));
     }
 
     // handlers

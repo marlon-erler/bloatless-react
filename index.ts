@@ -52,6 +52,10 @@ export class State<T> {
         fn(this._value);
     }
 
+    subscribeSilent(fn: (newValue: T) => void): void {
+        this._bindings.add(fn);
+    }
+
     // stringify
     toString(): string {
         return JSON.stringify(this._value);
@@ -170,6 +174,14 @@ export function createProxyState<T>(
         state.subscribe(() => (proxyState.value = fn()))
     );
     return proxyState;
+}
+
+export function bulkSubscribe(
+    statesToSubscibe: State<any>[],
+    fn: () => void
+): void {
+    statesToSubscibe.forEach((state) => state.subscribeSilent(fn));
+    fn();
 }
 
 function persistState(localStorageKey: string, state: State<any>) {

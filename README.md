@@ -44,12 +44,22 @@ const age = new React.State(69); //will be State<number>
 
 // Get value
 console.log(name.value);
+// John Doe
 
 // Subscribe
 age.subscribe(newAge => console.log(`Age changed to ${newAge}`));
+// Age changed to 69
+
+React.bulkSubscribe([name, age], () => console.log(`${name.value} is ${age.value} years old`))
+// John Doe is 69 years old
 
 // Set value
-name.value = "Jeff";
+age.value = 70;
+// Age changed to 70
+// John Doe is 70 years old
+
+name.value = "Josh"
+// Josh is 70 years old
 ```
 
 ## Proxy States
@@ -61,12 +71,13 @@ A Proxy State is a State based on multiple other States. This reduces code and c
 import * as React from 'bloatless-react';
 
 // Create States
-const name = new React.State("John Doe"); // will be State<string>
-const age = new React.State(69); //will be State<number>
+const name = new React.State("John Doe");
+const age = new React.State(69);
 
 // Proxy State
 const summary = React.createProxyState([name, age], () => `${name.value} is ${age.value} years old.`)
 summary.subscribe(console.log);
+//John Doe is 69 years old.
 ```
 
 ## ListStates
@@ -377,3 +388,8 @@ Other changes
 ## 1.3.5
 
 - Fix bug where `MapState.clear()` would not trigger removal handlers
+
+## 1.3.6
+
+- Add `State.subscribeSilent()`
+- Add `bulkSubscribe()`

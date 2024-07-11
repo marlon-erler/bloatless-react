@@ -51,7 +51,6 @@ age.subscribe(newAge => console.log(`Age changed to ${newAge}`));
 // Age changed to 69
 
 React.bulkSubscribe([name, age], () => console.log(`${name.value} is ${age.value} years old`))
-// John Doe is 69 years old
 
 // Set value
 age.value = 70;
@@ -393,3 +392,7 @@ Other changes
 
 - Add `State.subscribeSilent()`
 - Add `bulkSubscribe()`
+
+## 1.3.7
+
+- `bulkSubscribe()` does not fire the callback when set up

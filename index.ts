@@ -181,7 +181,6 @@ export function bulkSubscribe(
     fn: () => void
 ): void {
     statesToSubscibe.forEach((state) => state.subscribeSilent(fn));
-    fn();
 }
 
 function persistState(localStorageKey: string, state: State<any>) {

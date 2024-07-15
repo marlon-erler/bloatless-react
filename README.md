@@ -396,3 +396,7 @@ Other changes
 ## 1.3.7
 
 - `bulkSubscribe()` does not fire the callback when set up
+
+## 1.3.8
+
+- Allow multiple handlers for `MapState` and `ListState`

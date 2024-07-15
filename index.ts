@@ -64,7 +64,7 @@ export class State<T> {
 
 export class ListState<T> extends State<Set<T>> {
     private additionHandlers = new Set<AdditionSubscription<T>>();
-    private removalHandlers = new Map<T, RemovalSubscription<T>>();
+    private removalHandlers = new Map<T, Set<RemovalSubscription<T>>>();
 
     // init
     constructor(initialItems?: T[]) {
@@ -85,7 +85,7 @@ export class ListState<T> extends State<Set<T>> {
             this.value.delete(item);
 
             if (!this.removalHandlers.has(item)) return;
-            this.removalHandlers.get(item)!(item);
+            this.removalHandlers.get(item)!.forEach((handler) => handler(item));
             this.removalHandlers.delete(item);
         });
         this.callSubscriptions();
@@ -102,7 +102,9 @@ export class ListState<T> extends State<Set<T>> {
     }
 
     handleRemoval(item: T, handler: RemovalSubscription<T>): void {
-        this.removalHandlers.set(item, handler);
+        if (!this.removalHandlers.has(item))
+            this.removalHandlers.set(item, new Set());
+        this.removalHandlers.get(item)!.add(handler);
     }
 
     // stringification
@@ -115,7 +117,7 @@ export class ListState<T> extends State<Set<T>> {
 
 export class MapState<T> extends State<Map<string, T>> {
     private additionHandlers = new Set<AdditionSubscription<T>>();
-    private removalHandlers = new Map<T, RemovalSubscription<T>>();
+    private removalHandlers = new Map<T, Set<RemovalSubscription<T>>>();
 
     // init
     constructor(initialItems?: [string, T][]) {
@@ -138,7 +140,7 @@ export class MapState<T> extends State<Map<string, T>> {
         this.callSubscriptions();
 
         if (!this.removalHandlers.has(item)) return;
-        this.removalHandlers.get(item)!(item);
+        this.removalHandlers.get(item)!.forEach((handler) => handler(item));
         this.removalHandlers.delete(item);
     }
 
@@ -153,7 +155,9 @@ export class MapState<T> extends State<Map<string, T>> {
     }
 
     handleRemoval(item: T, handler: RemovalSubscription<T>): void {
-        this.removalHandlers.set(item, handler);
+        if (!this.removalHandlers.has(item))
+            this.removalHandlers.set(item, new Set());
+        this.removalHandlers.get(item)!.add(handler);
     }
 
     // stringification

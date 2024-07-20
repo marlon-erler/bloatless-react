@@ -327,9 +327,7 @@ export function createElement(
                             break;
                         }
                         case "append":
-                        case "appendandscroll":
                         case "prepend": {
-                            element.style.scrollBehavior = "smooth";
                             try {
                                 const [listState, toElement] = value as [
                                     listState: ListState<any>,
@@ -337,7 +335,9 @@ export function createElement(
                                 ];
 
                                 listState.handleAddition((newItem) => {
+                                    console.log(newItem, toElement);
                                     const child = toElement(newItem);
+                                    console.log(child);
                                     listState.handleRemoval(newItem, () =>
                                         child.remove()
                                     );
@@ -348,8 +348,8 @@ export function createElement(
                                         element.prepend(child);
                                     }
                                 });
-                            } catch {
-                                throw `error: cannot process subscribe:children directive because StateItemConverter is not defined. Usage: "subscribe:children={[list, converter]}"; you can find a more detailed example in the documentation`;
+                            } catch (error) {
+                                throw `error: cannot process subscribe:children directive. \n Error: ${error} \n Usage: "subscribe:children={[list, converter]}"; you can find a more detailed example in the documentation.`;
                             }
                         }
                     }

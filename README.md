@@ -400,3 +400,7 @@ Other changes
 ## 1.3.8
 
 - Allow multiple handlers for `MapState` and `ListState`
+
+## 1.3.9
+
+- Improve error handling

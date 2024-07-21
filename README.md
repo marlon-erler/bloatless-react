@@ -404,3 +404,4 @@ Other changes
 ## 1.3.9
 
 - Improve error handling
+- Fix error where the `children:` directive would attempt to set attributes

@@ -351,6 +351,7 @@ export function createElement(
                             }
                         }
                     }
+                    break;
                 }
                 default:
                     element.setAttribute(attributename, value);

@@ -335,9 +335,7 @@ export function createElement(
                                 ];
 
                                 listState.handleAddition((newItem) => {
-                                    console.log(newItem, toElement);
                                     const child = toElement(newItem);
-                                    console.log(child);
                                     listState.handleRemoval(newItem, () =>
                                         child.remove()
                                     );

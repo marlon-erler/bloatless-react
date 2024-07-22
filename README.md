@@ -377,31 +377,35 @@ Other changes
 
 ## 1.3.3
 
-- Rename `ListItemConverter` to `StateItemConverter`
-- Improve documentation
+-   Rename `ListItemConverter` to `StateItemConverter`
+-   Improve documentation
 
 ## 1.3.4
 
-- Remove old item from `MapState` when calling `MapState.set()` for an existing key
+-   Remove old item from `MapState` when calling `MapState.set()` for an existing key
 
 ## 1.3.5
 
-- Fix bug where `MapState.clear()` would not trigger removal handlers
+-   Fix bug where `MapState.clear()` would not trigger removal handlers
 
 ## 1.3.6
 
-- Add `State.subscribeSilent()`
-- Add `bulkSubscribe()`
+-   Add `State.subscribeSilent()`
+-   Add `bulkSubscribe()`
 
 ## 1.3.7
 
-- `bulkSubscribe()` does not fire the callback when set up
+-   `bulkSubscribe()` does not fire the callback when set up
 
 ## 1.3.8
 
-- Allow multiple handlers for `MapState` and `ListState`
+-   Allow multiple handlers for `MapState` and `ListState`
 
 ## 1.3.9
 
-- Improve error handling
-- Fix error where the `children:` directive would attempt to set attributes
+-   Improve error handling
+-   Fix error where the `children:` directive would attempt to set attributes
+
+## 1.3.10
+
+-   Improve error handling

@@ -347,7 +347,8 @@ export function createElement(
                                     }
                                 });
                             } catch (error) {
-                                throw `error: cannot process subscribe:children directive. \n Error: ${error} \n Usage: "subscribe:children={[list, converter]}"; you can find a more detailed example in the documentation.`;
+                                console.error(error);
+                                throw `error: cannot process subscribe:children directive. \n Usage: "children:append={[list, converter]}"; you can find a more detailed example in the documentation.`;
                             }
                         }
                     }

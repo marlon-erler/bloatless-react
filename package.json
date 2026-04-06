@@ -1,6 +1,6 @@
 {
   "name": "bloatless-react",
-  "version": "1.3.10",
+  "version": "1.3.11",
   "description": "very minimal and flexible react alternative",
   "repository": {
     "type": "git",
@@ -9,6 +9,6 @@
   "author": "marlon-erler",
   "license": "SEE LICENSE IN LICENSE",
   "dependencies": {
-    "uuid": "^10.0.0"
+    "uuid": "^13.0.0"
   }
 }

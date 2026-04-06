@@ -186,6 +186,7 @@ The `on:<event>` directive adds an EventListener. This directive also supports t
 ```TypeScript
 <input on:enter={someFunction}></input>
 <button on:click={someFunction}>Click me</button>
+<div metakey:s={someFunction}>...</div> // triggers when pressing Command/Ctrl+s
 ```
 
 ## Changing Properties
@@ -409,3 +410,8 @@ Other changes
 ## 1.3.10
 
 -   Improve error handling
+
+## 1.3.11
+
+- Add `metakey:` directive
+- Pass event to `on:enter` call

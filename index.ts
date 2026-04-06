@@ -267,9 +267,9 @@ export function createElement(
                 case "on": {
                     switch (directiveValue) {
                         case "enter": {
-                            element.addEventListener("keydown", (e) => {
-                                if ((e as KeyboardEvent).key != "Enter") return;
-                                value();
+                            element.addEventListener("keydown", (e: KeyboardEvent) => {
+                                if (e.key != "Enter") return;
+                                value(e);
                             });
                             break;
                         }
@@ -277,6 +277,14 @@ export function createElement(
                             element.addEventListener(directiveValue, value);
                         }
                     }
+                    break;
+                }
+                case "metakey": {
+                    element.addEventListener("keydown", (e: KeyboardEvent) => {
+                        if (e.metaKey == false) return;
+                        if (e.key != directiveValue) return;
+                        value(e);
+                    })
                     break;
                 }
                 case "subscribe": {

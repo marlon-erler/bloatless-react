@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": false,
+        "jsx": "react",
+        "jsxFactory": "FWI.createElement",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "target": "es2020"
+    }
+}

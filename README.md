@@ -423,4 +423,7 @@ Other changes
 - trigger state subscriptions even when value is unchanged
 
 ## 1.3.14
-- fix bug where proxy states would trigger subscriptions upon creation
+- fix bug where proxy states would trigger subscriptions upon creation$a
+
+## 1.3.15
+- do not re-add values to `ListState` if already present

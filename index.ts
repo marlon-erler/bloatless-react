@@ -24,7 +24,7 @@ export type RemovalSubscription<T> = (removedItem: T) => void;
 
 export class State<T> {
     private _value: T;
-    private _bindings = new Set<StateSubscription<T>>();
+    _bindings = new Set<StateSubscription<T>>();
 
     // init
     constructor(initialValue: T) {
@@ -73,6 +73,7 @@ export class ListState<T> extends State<Set<T>> {
     // list
     add(...items: T[]): void {
         items.forEach((item) => {
+            if (this.value.has(item)) return;
             this.value.add(item);
             this.additionHandlers.forEach((handler) => handler(item));
         });

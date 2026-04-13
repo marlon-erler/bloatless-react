@@ -174,7 +174,7 @@ export function createProxyState<T>(
 ): State<T> {
     const proxyState = new State<T>(fn());
     statesToSubscibe.forEach((state) =>
-        state.subscribe(() => (proxyState.value = fn()))
+        state.subscribeSilent(() => (proxyState.value = fn()))
     );
     return proxyState;
 }

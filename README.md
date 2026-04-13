@@ -418,3 +418,9 @@ Other changes
 
 ## 1.3.12
 - Replace `metakey:` with `keystroke:` directive to support control key additionally 
+
+## 1.3.13
+- trigger state subscriptions even when value is unchanged
+
+## 1.3.14
+- fix bug where proxy states would trigger subscriptions upon creation

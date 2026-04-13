@@ -415,3 +415,6 @@ Other changes
 
 - Add `metakey:` directive
 - Pass event to `on:enter` call
+
+## 1.3.12
+- Replace `metakey:` with `keystroke:` directive to support control key additionally 

@@ -37,7 +37,6 @@ export class State<T> {
     }
 
     set value(newValue: T) {
-        if (this._value == newValue) return;
         this._value = newValue;
         this.callSubscriptions();
     }
@@ -279,9 +278,9 @@ export function createElement(
                     }
                     break;
                 }
-                case "metakey": {
+                case "keystroke": {
                     element.addEventListener("keydown", (e: KeyboardEvent) => {
-                        if (e.metaKey == false) return;
+                        if (e.metaKey == false && e.ctrlKey == false) return;
                         if (e.key != directiveValue) return;
                         value(e);
                     })

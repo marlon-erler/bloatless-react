@@ -91,6 +91,7 @@ const listState = new React.ListState([1, 2]);
 console.log(listState.value);
 // Set [ 1, 2 ]
 
+listState.handleRemovals((item) => console.log(item + " removed"));
 listState.handleAddition((newItem: number) => {
   console.log("+", newItem);
 
@@ -128,6 +129,7 @@ const mapState = new React.MapState<number>([
 console.log(mapState.value);
 // Map { a → 1, b → 2 }
 
+mapState.handleRemovals((item) => console.log(item + " removed"));
 mapState.handleAddition((newItem: number) => {
   console.log("+", newItem)
 
@@ -427,3 +429,6 @@ Other changes
 
 ## 1.3.15
 - do not re-add values to `ListState` if already present
+
+## 1.4.0
+- Add `handleRemovals` method 

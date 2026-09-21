@@ -64,6 +64,7 @@ export class State<T> {
 export class ListState<T> extends State<Set<T>> {
     private additionHandlers = new Set<AdditionSubscription<T>>();
     private removalHandlers = new Map<T, Set<RemovalSubscription<T>>>();
+    private genericRemovalHandlers = new Set<RemovalSubscription<T>>();
 
     // init
     constructor(initialItems?: T[]) {
@@ -84,6 +85,7 @@ export class ListState<T> extends State<Set<T>> {
         items.forEach((item) => {
             this.value.delete(item);
 
+	    this.genericRemovalHandlers.forEach(handler => handler(item));
             if (!this.removalHandlers.has(item)) return;
             this.removalHandlers.get(item)!.forEach((handler) => handler(item));
             this.removalHandlers.delete(item);
@@ -106,6 +108,10 @@ export class ListState<T> extends State<Set<T>> {
             this.removalHandlers.set(item, new Set());
         this.removalHandlers.get(item)!.add(handler);
     }
+    
+    handleRemovals(handler: RemovalSubscription<T>): void {
+        this.genericRemovalHandlers.add(handler);
+    }
 
     // stringification
     toString(): string {
@@ -118,6 +124,7 @@ export class ListState<T> extends State<Set<T>> {
 export class MapState<T> extends State<Map<string, T>> {
     private additionHandlers = new Set<AdditionSubscription<T>>();
     private removalHandlers = new Map<T, Set<RemovalSubscription<T>>>();
+    private genericRemovalHandlers = new Set<RemovalSubscription<T>>();
 
     // init
     constructor(initialItems?: [string, T][]) {
@@ -139,32 +146,37 @@ export class MapState<T> extends State<Map<string, T>> {
         this.value.delete(key);
         this.callSubscriptions();
 
-        if (!this.removalHandlers.has(item)) return;
-        this.removalHandlers.get(item)!.forEach((handler) => handler(item));
-        this.removalHandlers.delete(item);
+	this.genericRemovalHandlers.forEach(handler => handler(item));
+	if (!this.removalHandlers.has(item)) return;
+	this.removalHandlers.get(item)!.forEach((handler) => handler(item));
+	this.removalHandlers.delete(item);
     }
 
     clear() {
-        [...this.value.keys()].forEach((key) => this.remove(key));
+	[...this.value.keys()].forEach((key) => this.remove(key));
     }
 
     // handlers
     handleAddition(handler: AdditionSubscription<T>): void {
-        this.additionHandlers.add(handler);
-        [...this.value.values()].forEach(handler);
+	this.additionHandlers.add(handler);
+	[...this.value.values()].forEach(handler);
     }
 
     handleRemoval(item: T, handler: RemovalSubscription<T>): void {
-        if (!this.removalHandlers.has(item))
-            this.removalHandlers.set(item, new Set());
-        this.removalHandlers.get(item)!.add(handler);
+	if (!this.removalHandlers.has(item))
+	this.removalHandlers.set(item, new Set());
+	this.removalHandlers.get(item)!.add(handler);
+    }
+
+    handleRemovals(handler: RemovalSubscription<T>): void {
+	this.genericRemovalHandlers.add(handler);
     }
 
     // stringification
     toString(): string {
-        const array = [...this.value.entries()];
-        const json = JSON.stringify(array);
-        return json;
+	const array = [...this.value.entries()];
+	const json = JSON.stringify(array);
+	return json;
     }
 }
 
@@ -175,7 +187,7 @@ export function createProxyState<T>(
 ): State<T> {
     const proxyState = new State<T>(fn());
     statesToSubscibe.forEach((state) =>
-        state.subscribeSilent(() => (proxyState.value = fn()))
+	state.subscribeSilent(() => (proxyState.value = fn()))
     );
     return proxyState;
 }
@@ -189,8 +201,8 @@ export function bulkSubscribe(
 
 function persistState(localStorageKey: string, state: State<any>) {
     state.subscribe(() => {
-        const stringifiedValue = state.toString();
-        localStorage.setItem(localStorageKey, stringifiedValue);
+	const stringifiedValue = state.toString();
+	localStorage.setItem(localStorageKey, stringifiedValue);
     });
 }
 
@@ -199,8 +211,8 @@ export function restoreState<T>(
     initialStateValue: T
 ): State<T> {
     const storedString =
-        localStorage.getItem(localStorageKey) ??
-        JSON.stringify(initialStateValue);
+    localStorage.getItem(localStorageKey) ??
+    JSON.stringify(initialStateValue);
     const convertedValue = JSON.parse(storedString);
 
     const state = new State(convertedValue);
@@ -216,9 +228,9 @@ export function restoreListState<T>(
     const storedString = localStorage.getItem(localStorageKey) ?? "";
 
     try {
-        const array = JSON.parse(storedString);
-        if (!Array.isArray(array)) throw "";
-        initialItems = array;
+	const array = JSON.parse(storedString);
+	if (!Array.isArray(array)) throw "";
+	initialItems = array;
     } catch {}
 
     const state = new ListState<T>(initialItems);
@@ -234,9 +246,9 @@ export function restoreMapState<T>(
     const storedString = localStorage.getItem(localStorageKey) ?? "";
 
     try {
-        const array = JSON.parse(storedString);
-        if (!Array.isArray(array)) throw "";
-        initialItems = array;
+	const array = JSON.parse(storedString);
+	if (!Array.isArray(array)) throw "";
+	initialItems = array;
     } catch {}
 
     const state = new MapState<T>(initialItems);
@@ -249,7 +261,7 @@ export type StateItemConverter<T> = (item: T) => HTMLElement;
 
 /*
     JSX
-*/
+ */
 
 export function createElement(
     tagName: keyof HTMLElementTagNameMap,
@@ -259,113 +271,113 @@ export function createElement(
     const element = document.createElement(tagName);
 
     if (attributes != null)
-        Object.entries(attributes).forEach((entry) => {
-            const [attributename, value] = entry;
-            const [directiveKey, directiveValue] = attributename.split(":");
+	Object.entries(attributes).forEach((entry) => {
+	    const [attributename, value] = entry;
+	    const [directiveKey, directiveValue] = attributename.split(":");
 
-            switch (directiveKey) {
-                case "on": {
-                    switch (directiveValue) {
-                        case "enter": {
-                            element.addEventListener("keydown", (e: KeyboardEvent) => {
-                                if (e.key != "Enter") return;
-                                value(e);
-                            });
-                            break;
-                        }
-                        default: {
-                            element.addEventListener(directiveValue, value);
-                        }
-                    }
-                    break;
-                }
-                case "keystroke": {
-                    element.addEventListener("keydown", (e: KeyboardEvent) => {
-                        if (e.metaKey == false && e.ctrlKey == false) return;
-                        if (e.key != directiveValue) return;
-                        value(e);
-                    })
-                    break;
-                }
-                case "subscribe": {
-                    const state = value as State<any>;
-                    state.subscribe(
-                        (newValue) => (element[directiveValue] = newValue)
-                    );
+	    switch (directiveKey) {
+		case "on": {
+		    switch (directiveValue) {
+			case "enter": {
+			    element.addEventListener("keydown", (e: KeyboardEvent) => {
+				if (e.key != "Enter") return;
+				value(e);
+			    });
+			    break;
+			}
+			default: {
+			    element.addEventListener(directiveValue, value);
+			}
+		    }
+		    break;
+		}
+		case "keystroke": {
+		    element.addEventListener("keydown", (e: KeyboardEvent) => {
+			if (e.metaKey == false && e.ctrlKey == false) return;
+			if (e.key != directiveValue) return;
+			value(e);
+		    })
+		    break;
+		}
+		case "subscribe": {
+		    const state = value as State<any>;
+		    state.subscribe(
+			(newValue) => (element[directiveValue] = newValue)
+		    );
 
-                    break;
-                }
-                case "bind": {
-                    const state = value as State<any>;
-                    state.subscribe(
-                        (newValue) => (element[directiveValue] = newValue)
-                    );
-                    element.addEventListener(
-                        "input",
-                        () => (state.value = (element as any)[directiveValue])
-                    );
-                    break;
-                }
-                case "toggle": {
-                    if (value.subscribe) {
-                        const state = value as State<any>;
-                        state.subscribe((newValue) =>
-                            element.toggleAttribute(directiveValue, newValue)
-                        );
-                    } else {
-                        element.toggleAttribute(directiveValue, value);
-                    }
-                    break;
-                }
-                case "set": {
-                    const state = value as State<any>;
-                    state.subscribe((newValue) =>
-                        element.setAttribute(directiveValue, newValue)
-                    );
-                    break;
-                }
-                case "children": {
-                    switch (directiveValue) {
-                        case "set": {
-                            const state = value as State<Node | Node[]>;
-                            state.subscribe((newValue) => {
-                                element.innerHTML = "";
-                                element.append(...[newValue].flat());
-                            });
-                            break;
-                        }
-                        case "append":
-                        case "prepend": {
-                            try {
-                                const [listState, toElement] = value as [
-                                    listState: ListState<any>,
-                                    StateItemConverter<any>
-                                ];
+		    break;
+		}
+		case "bind": {
+		    const state = value as State<any>;
+		    state.subscribe(
+			(newValue) => (element[directiveValue] = newValue)
+		    );
+		    element.addEventListener(
+			"input",
+			() => (state.value = (element as any)[directiveValue])
+		    );
+		    break;
+		}
+		case "toggle": {
+		    if (value.subscribe) {
+			const state = value as State<any>;
+			state.subscribe((newValue) =>
+			    element.toggleAttribute(directiveValue, newValue)
+			);
+		    } else {
+			element.toggleAttribute(directiveValue, value);
+		    }
+		    break;
+		}
+		case "set": {
+		    const state = value as State<any>;
+		    state.subscribe((newValue) =>
+			element.setAttribute(directiveValue, newValue)
+		    );
+		    break;
+		}
+		case "children": {
+		    switch (directiveValue) {
+			case "set": {
+			    const state = value as State<Node | Node[]>;
+			    state.subscribe((newValue) => {
+				element.innerHTML = "";
+				element.append(...[newValue].flat());
+			    });
+			    break;
+			}
+			case "append":
+			case "prepend": {
+			    try {
+				const [listState, toElement] = value as [
+				    listState: ListState<any>,
+				    StateItemConverter<any>
+				];
 
-                                listState.handleAddition((newItem) => {
-                                    const child = toElement(newItem);
-                                    listState.handleRemoval(newItem, () =>
-                                        child.remove()
-                                    );
+				listState.handleAddition((newItem) => {
+				    const child = toElement(newItem);
+				    listState.handleRemoval(newItem, () =>
+					child.remove()
+				    );
 
-                                    if (directiveValue == "append") {
-                                        element.append(child);
-                                    } else if (directiveValue == "prepend") {
-                                        element.prepend(child);
-                                    }
-                                });
-                            } catch (error) {
-                                console.error(error);
-                                throw `error: cannot process subscribe:children directive. \n Usage: "children:append={[list, converter]}"; you can find a more detailed example in the documentation.`;
-                            }
-                        }
-                    }
-                    break;
-                }
-                default:
-                    element.setAttribute(attributename, value);
-            }
-        });
+				    if (directiveValue == "append") {
+					element.append(child);
+				    } else if (directiveValue == "prepend") {
+					element.prepend(child);
+				    }
+				});
+			    } catch (error) {
+				console.error(error);
+				throw `error: cannot process subscribe:children directive. \n Usage: "children:append={[list, converter]}"; you can find a more detailed example in the documentation.`;
+			    }
+			}
+		    }
+		    break;
+		}
+		default:
+		    element.setAttribute(attributename, value);
+	    }
+	});
 
     children.filter((x) => x).forEach((child) => element.append(child));
 
